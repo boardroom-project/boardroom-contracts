@@ -1,0 +1,25 @@
+{
+  "name": "boardroom-contracts",
+  "version": "0.1.0",
+  "description": "All critical BoardRoom contracts",
+  "main": "index.js",
+  "scripts": {
+    "test": "dapple test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/boardroom-project/boardroom-contracts.git"
+  },
+  "keywords": [
+    "boardroom",
+    "governance",
+    "ethereum",
+    "contracts"
+  ],
+  "author": "= <=>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/boardroom-project/boardroom-contracts/issues"
+  },
+  "homepage": "https://github.com/boardroom-project/boardroom-contracts#readme"
+}
