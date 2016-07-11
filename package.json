@@ -4,7 +4,8 @@
   "description": "All critical BoardRoom contracts",
   "main": "index.js",
   "scripts": {
-    "test": "dapple test"
+    "test": "dapple test",
+    "build": "dapple build"
   },
   "repository": {
     "type": "git",
