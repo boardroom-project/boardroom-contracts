@@ -89,6 +89,10 @@ contract BoardRoom is BoardRoomInterface {
     rules = Rules(_rules);
   }
 
+  function destructSelf(address _destination) onlyself {
+    selfdestruct(_destination);
+  }
+
 
   function positionWeightOf(uint _proposalID, uint _position) constant returns (uint) {
     return proposals[_proposalID].positions[_position];

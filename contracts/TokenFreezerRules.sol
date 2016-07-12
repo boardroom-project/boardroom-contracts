@@ -26,7 +26,7 @@ contract TokenFreezerRules is Rules {
     if(votingWeightOf(_sender, _proposalID) > 0
       && now < (created + debatePeriod)
       && token.frozenUntil(_sender) > (created + debatePeriod)
-      /* && board.hasVoted(_proposalID, _sender)*/) {
+      && board.hasVoted(_proposalID, _sender) == false) {
       return true;
     }
   }

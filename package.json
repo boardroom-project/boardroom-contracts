@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "dapple test",
+    "prebuild": "npm test",
     "build": "dapple build"
   },
   "repository": {
@@ -22,5 +23,8 @@
   "bugs": {
     "url": "https://github.com/boardroom-project/boardroom-contracts/issues"
   },
-  "homepage": "https://github.com/boardroom-project/boardroom-contracts#readme"
+  "homepage": "https://github.com/boardroom-project/boardroom-contracts#readme",
+  "devDependencies": {
+    "dapple": "^0.7.2"
+  }
 }
