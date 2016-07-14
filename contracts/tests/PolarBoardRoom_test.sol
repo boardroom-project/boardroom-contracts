@@ -70,6 +70,72 @@ contract PolarBoardRoomTests is Test {
     proxy.send(1000);
   }
 
+  function test_spamApproveAndFreeze() {
+  }
+
+  function test_spamFreeze() {
+  }
+
+  function test_invalidProposalBytecode() {
+  }
+
+  function test_doubleVotingFor() {
+  }
+
+  function test_doubleVotingAgainst() {
+  }
+
+  function test_invalidProposalDuration() {
+  }
+
+  function test_invalidProposalValue() {
+  }
+
+  function test_spamVoting() {
+  }
+
+  function test_forAgainst() {
+  }
+
+  function test_againstFor() {
+  }
+
+  function test_invalidSuicide() {
+  }
+
+  function test_invalidRuleChange() {
+  }
+
+  function test_voteSpammingAgainst() {
+  }
+
+  function test_voteSpammingFor(){
+  }
+
+  function test_validProposalExecution() {
+  }
+
+  function test_invalidProposalExecution() {
+  }
+
+  function test_validProxyOwnershipTransfer() {
+  }
+
+  function test_invalidProxyOwnershipTransfer() {
+  }
+
+  function test_validRuleChange() {
+  }
+
+  function test_invalidRuleChange() {
+  }
+
+  function test_validBoardFundTransfer() {
+  }
+
+  function test_validProxyFundTransfer() {
+  }
+
   function test_polarBoardRoom() {
     // setup member 1
     assertTrue(member1.approve(address(token), address(freezer), 500));

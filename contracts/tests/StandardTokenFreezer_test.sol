@@ -36,4 +36,7 @@ contract StandardTokenFreezerTests is Test {
     assertEq(freezer.balanceOf(address(user)), 5000);
     assertTrue(bool(freezer.frozenUntil(address(user)) > 0));
   }
+
+  function test_invalidTokenFreeze(){
+  }
 }
