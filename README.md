@@ -5,7 +5,7 @@ All BoardRoom contracts.
 
 ## Install
 ```
-git clone http://github.com/boardroom-contracts
+git clone https://github.com/boardroom-project/boardroom-contracts.git
 npm install
 ```
 
