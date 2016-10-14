@@ -4,9 +4,9 @@
   "description": "All critical BoardRoom contracts",
   "main": "index.js",
   "scripts": {
-    "test": "dapple test",
+    "test": "cd contracts && node ../node_modules/dapple/cmd/main.js test",
     "prebuild": "npm test",
-    "build": "dapple build"
+    "build": "cd contracts && node ../node_modules/dapple/cmd/main.js build"
   },
   "repository": {
     "type": "git",
@@ -18,7 +18,7 @@
     "ethereum",
     "contracts"
   ],
-  "author": "= <=>",
+  "author": "Nick Dodson <thenickdodson@gmail.com>",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/boardroom-project/boardroom-contracts/issues"

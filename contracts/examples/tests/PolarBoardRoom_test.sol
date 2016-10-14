@@ -1,9 +1,10 @@
 import "dapple/test.sol";
-import "../BoardRoom.sol";
+import "../../BoardRoom.sol";
+import "../../OwnedProxy.sol";
+
 import "../HumanStandardTokenFactory.sol";
 import "../StandardToken.sol";
 import "../StandardTokenFreezer.sol";
-import "../OwnedProxy.sol";
 import "../TokenFreezerRules.sol";
 
 contract BoardMemberProxy {

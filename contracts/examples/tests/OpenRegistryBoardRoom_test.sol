@@ -1,7 +1,7 @@
 import "dapple/test.sol";
-import "../BoardRoom.sol";
+import "../../BoardRoom.sol";
+import "../../BoardRoom.sol";
 import "../OpenRegistryRules.sol";
-import "../OwnedProxy.sol";
 import "../OpenRegistry.sol";
 
 contract MemberProxy {
