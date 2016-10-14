@@ -6,7 +6,8 @@
   "scripts": {
     "test": "cd contracts && node ../node_modules/dapple/cmd/main.js test",
     "prebuild": "npm test",
-    "build": "cd contracts && node ../node_modules/dapple/cmd/main.js build"
+    "build": "cd contracts && node ../node_modules/dapple/cmd/main.js build",
+    "deploy:openboard": "node ./internals/scripts/deploy.js"
   },
   "repository": {
     "type": "git",
@@ -26,6 +27,10 @@
   "homepage": "https://github.com/boardroom-project/boardroom-contracts#readme",
   "devDependencies": {
     "dapple": "^0.7.2",
-    "ethdeploy": "git+https://github.com/SilentCicero/ethdeploy"
+    "ethdeploy": "git+https://github.com/SilentCicero/ethdeploy.git",
+    "ethdeploy-provider-http": "^0.1.0",
+    "ethdeploy-provider-zero-client": "^0.1.7",
+    "ethereumjs-tx": "^1.1.2",
+    "ethereumjs-util": "^4.5.0"
   }
 }
