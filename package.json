@@ -19,12 +19,13 @@
     "contracts"
   ],
   "author": "Nick Dodson <thenickdodson@gmail.com>",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/boardroom-project/boardroom-contracts/issues"
   },
   "homepage": "https://github.com/boardroom-project/boardroom-contracts#readme",
   "devDependencies": {
-    "dapple": "^0.7.2"
+    "dapple": "^0.7.2",
+    "ethdeploy": "git+https://github.com/SilentCicero/ethdeploy"
   }
 }
