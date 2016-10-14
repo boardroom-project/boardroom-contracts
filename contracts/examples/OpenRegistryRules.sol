@@ -1,4 +1,4 @@
-import "OpenRegistry.sol";
+import "examples/OpenRegistry.sol";
 import "Rules.sol";
 import "BoardRoom.sol";
 

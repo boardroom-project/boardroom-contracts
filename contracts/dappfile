@@ -1,8 +1,8 @@
 version: 1.0.0
 tags: []
 layout:
-  sol_sources: contracts
-  build_dir: ../build
+  sol_sources: ./
+  build_dir: ../
 dependencies: {}
 ignore: []
 name: boardroom-contracts

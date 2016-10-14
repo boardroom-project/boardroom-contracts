@@ -1,7 +1,7 @@
 import "dapple/test.sol";
-import "../StandardToken.sol";
-import "../HumanStandardTokenFactory.sol";
-import "../StandardTokenFreezer.sol";
+import "examples/StandardToken.sol";
+import "examples/HumanStandardTokenFactory.sol";
+import "examples/StandardTokenFreezer.sol";
 
 contract FreezerUserProxy {
   function createHumanStandardToken(address _factory, uint256 _initialAmount, string _name, uint8 _decimals, string _symbol) returns (address) {

@@ -1,4 +1,4 @@
-import "StandardToken.sol";
+import "examples/StandardToken.sol";
 
 contract StandardTokenFreezerInterface {
   function freezeAllowance(uint _daysToThaw) returns (uint amountFrozen) {}

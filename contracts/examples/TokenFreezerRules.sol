@@ -1,5 +1,5 @@
 import "Rules.sol";
-import "StandardTokenFreezer.sol";
+import "examples/StandardTokenFreezer.sol";
 import "BoardRoom.sol";
 
 contract TokenFreezerRules is Rules {

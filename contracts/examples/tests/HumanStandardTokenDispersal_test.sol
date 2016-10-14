@@ -1,6 +1,6 @@
 import "dapple/test.sol";
-import "../HumanStandardToken.sol";
-import "../HumanStandardTokenDispersal.sol";
+import "examples/HumanStandardToken.sol";
+import "examples/HumanStandardTokenDispersal.sol";
 
 contract HumanStandardTokenDispersalTest is Test {
   uint[] amounts;

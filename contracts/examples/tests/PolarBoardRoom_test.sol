@@ -1,11 +1,11 @@
 import "dapple/test.sol";
-import "../../BoardRoom.sol";
-import "../../OwnedProxy.sol";
+import "BoardRoom.sol";
+import "OwnedProxy.sol";
 
-import "../HumanStandardTokenFactory.sol";
-import "../StandardToken.sol";
-import "../StandardTokenFreezer.sol";
-import "../TokenFreezerRules.sol";
+import "examples/HumanStandardTokenFactory.sol";
+import "examples/StandardToken.sol";
+import "examples/StandardTokenFreezer.sol";
+import "examples/TokenFreezerRules.sol";
 
 contract BoardMemberProxy {
   function createHumanStandardToken(address _factory, uint256 _initialAmount, string _name, uint8 _decimals, string _symbol) returns (address) {
@@ -68,7 +68,9 @@ contract PolarBoardRoomTests is Test {
     rules = new TokenFreezerRules(address(freezer));
     board = new BoardRoom(address(rules));
     proxy = new OwnedProxy(address(board));
-    proxy.send(1000);
+    if (!proxy.send(1000)) {
+      throw;
+    }
   }
 
   function test_spamApproveAndFreeze() {
@@ -102,9 +104,6 @@ contract PolarBoardRoomTests is Test {
   }
 
   function test_invalidSuicide() {
-  }
-
-  function test_invalidRuleChange() {
   }
 
   function test_voteSpammingAgainst() {
