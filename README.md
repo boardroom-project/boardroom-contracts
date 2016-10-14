@@ -51,12 +51,14 @@ contract OpenRules is Rules {
 ## Example Board
 An example OpenRules BoardRoom is deployed here, this will allow you to load and interact with the BoardRoom contract on testnet without having to deploy your own.
 
-  TestNet:
-    1. OpenRules.sol
-    0x59dcac601282ae67042d97c543ff524ec8509911
+```
+TestNet:
+  1. OpenRules.sol
+  0x59dcac601282ae67042d97c543ff524ec8509911
 
-    2. BoardRoom.sol
-    0xd89b8a74c153f0626497bc4a531f702c6a4b285f
+  2. BoardRoom.sol
+  0xd89b8a74c153f0626497bc4a531f702c6a4b285f
+```
 
 ## Test
 ```
