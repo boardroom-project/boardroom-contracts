@@ -1,13 +1,12 @@
-const contracts = require('../../build/classes.json');
+const contracts = require('../../lib/classes.json');
 const account = require('../../../account.json');
 const Tx = require('ethereumjs-tx');
 const ethUtil = require('ethereumjs-util');
 
-console.log(account);
-
 module.exports = {
   output: {
     environment: 'testnet',
+    path: './lib/environments.json',
   },
   entry: {
     testnet: contracts,

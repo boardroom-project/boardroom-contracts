@@ -12,6 +12,10 @@ contract BoardRoomInterface {
   function positionWeightOf(uint _proposalID, uint _position) constant returns (uint) {}
   function voteOf(uint _proposalID, address _voter) constant returns (uint, uint, uint) {}
   function hasVoted(uint _proposalID, address _voter) constant returns (bool) {}
+
+  event ProposalCreated(uint _proposalID, address _destination, uint _value);
+  event VoteCounted(uint _proposalID, uint _position, address _voter);
+  event ProposalExecuted(uint _proposalID, address _sender);
 }
 
 contract BoardRoom is BoardRoomInterface {
@@ -142,10 +146,6 @@ contract BoardRoom is BoardRoomInterface {
     uint weight;
     uint created;
   }
-
-  event ProposalCreated(uint _proposalID, address _destination, uint _value);
-  event VoteCounted(uint _proposalID, uint _position, address _voter);
-  event ProposalExecuted(uint _proposalID, address _sender);
 
   Proposal[] public proposals;
   Rules public rules;

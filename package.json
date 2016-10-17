@@ -7,7 +7,7 @@
     "test": "cd contracts && node ../node_modules/dapple/cmd/main.js test",
     "prebuild": "npm test",
     "build": "cd contracts && node ../node_modules/dapple/cmd/main.js build",
-    "deploy:openboard": "node ./internals/scripts/deploy.js"
+    "deploy:openboard": "node ./node_modules/ethdeploy/bin/main.js ./internals/ethdeploy/ethdeploy.openrules.testnet.js"
   },
   "repository": {
     "type": "git",
