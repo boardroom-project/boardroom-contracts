@@ -108,6 +108,8 @@ const boardroomInstance = BoardRoom.at('0xd89b8a74c153f0626497bc4a531f702c6a4b28
 
 // Helper Values
 const unixDay = 24 * 60 * 60;
+const emptyBytes = '';
+const emptyWeb3Address = 0;
 
 
 /*
@@ -118,11 +120,11 @@ const unixDay = 24 * 60 * 60;
 // Create a New Proposal
 boardroomInstance.newProposal(
   "My New Dummy Proposal",
-  0,
+  emptyWeb3Address,
   30 * unixDay,
   '0x59dcac601282ae67042d97c543ff524ec8509911',
   5000,
-  '', function(newProposalError, newProposalTxHash){
+  emptyBytes, function(newProposalError, newProposalTxHash){
   console.log('New Proposal:', newProposalError, newProposalTxHash);  
 });
 
@@ -144,7 +146,7 @@ boardroomInstance.vote(2, 1, function(voteError, voteTxHash){
 });
 
 // Listen for New Vote
-boardroomInstance.VoteCounted({}, function(voteCountedError, voteCountedResult){
+boardroomInstance.VoteCounted({_proposalID: 2}, function(voteCountedError, voteCountedResult){
   console.log('Vote Counted', voteCountedError, voteCountedResult);
 });
 */
@@ -156,7 +158,7 @@ boardroomInstance.VoteCounted({}, function(voteCountedError, voteCountedResult){
 // =======================
 
 // Execute a Proposal (with ID 2)
-boardroomInstance.execute(2, '', function(executeError, executeTxHash){
+boardroomInstance.execute(2, emptyBytes, function(executeError, executeTxHash){
   console.log('Proposal Execute', executeError, executeTxHash);
 });
 
