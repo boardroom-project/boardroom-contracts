@@ -56,9 +56,9 @@ TestNet:
 
 ## Contract Interfaces
 
-BoardRoom has two prominent contractal interfaces. The BoardRoom contract interface, and the rules interface. The rules interface is mainly used by the core BoardRoom contract, while the UI should primarily interact with the BoardRoom interface and contract.
+BoardRoom has two prominent contractal interfaces. The `BoardRoom` contract interface, and the `Rules` interface. The Rules interface is mainly used by the core BoardRoom contract, while the UI should primarily interact with the BoardRoom interface and contract.
 
-### BoardRoom Interface
+### BoardRoom
 
 ```
 contract BoardRoom {
@@ -81,7 +81,7 @@ contract BoardRoom {
 
 Note: other data getters are the public constant methods `proposals(num uint ID)` and `rules()`.
 
-### Rules Interface
+### Rules
 
 ```
 contract Rules {
@@ -94,7 +94,7 @@ contract Rules {
 
 ## Web3 Usage
 
-```
+```js
 // require web3 and instantiate a web3 instance
 const Web3 = require('web3');
 const web3 = new Web3(new web3.providers.HttpProvider('https://morden.infura.io:8545'));
@@ -106,7 +106,7 @@ const BoardRoom = web3.eth.contract(JSON.parse(boardroomContracts.contracts.Boar
 // Example Instance (live on morden testnet**)
 const boardroomInstance = BoardRoom.at('0xd89b8a74c153f0626497bc4a531f702c6a4b285f');
 
-// Helper Value
+// Helper Values
 const unixDay = 24 * 60 * 60;
 
 
@@ -116,7 +116,13 @@ const unixDay = 24 * 60 * 60;
 // =======================
 
 // Create a New Proposal
-boardroomInstance.newProposal("My New Dummy Proposal", address(0), 30 * unixDay, '0x59dcac601282ae67042d97c543ff524ec8509911', 5000, '', function(newProposalError, newProposalTxHash){
+boardroomInstance.newProposal(
+  "My New Dummy Proposal",
+  0,
+  30 * unixDay,
+  '0x59dcac601282ae67042d97c543ff524ec8509911',
+  5000,
+  '', function(newProposalError, newProposalTxHash){
   console.log('New Proposal:', newProposalError, newProposalTxHash);  
 });
 
@@ -155,7 +161,7 @@ boardroomInstance.execute(2, '', function(executeError, executeTxHash){
 });
 
 // Listen for Executed Proposal
-boardroomInstance.ProposalExecuted({}, function(proposalExecutedError, proposalExecutedResult){
+boardroomInstance.ProposalExecuted({_proposalID: 2}, function(proposalExecutedError, proposalExecutedResult){
   console.log('Proposal Executed', proposalExecutedError, proposalExecutedResult);
 });
 */
