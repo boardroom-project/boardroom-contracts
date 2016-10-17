@@ -9,12 +9,6 @@ git clone https://github.com/boardroom-project/boardroom-contracts.git
 npm install
 ```
 
-## Standard Deloyment Flow
-
-The standard BoardRoom contract deployment flow is as follows:
-
-[AnyRulesContractRequirements] => TheRulesContract.sol => BoardRoom.sol
-
 ## Example Rules Contract
 
 Here anyone can vote and table proposals. The voting weight is hard coded at 1. Anyone can vote multiple times, and a proposal has won only when people who voted yea is greater than nay.
@@ -85,6 +79,8 @@ contract BoardRoom {
 }
 ```
 
+Note: other data getters are the public constant methods `proposals(num uint ID)` and `rules()`.
+
 ### Rules Interface
 
 ```
@@ -111,8 +107,13 @@ const BoardRoom = web3.eth.contract(JSON.parse(boardroomContracts.contracts.Boar
 const boardroomInstance = BoardRoom.at('0xd89b8a74c153f0626497bc4a531f702c6a4b285f');
 
 // Helper Value
-const unixDay = 24*60*60;
+const unixDay = 24 * 60 * 60;
 
+
+/*
+// =======================
+// CREATING A NEW PROPOSAL
+// =======================
 
 // Create a New Proposal
 boardroomInstance.newProposal("My New Dummy Proposal", address(0), 30 * unixDay, '0x59dcac601282ae67042d97c543ff524ec8509911', 5000, '', function(newProposalError, newProposalTxHash){
@@ -123,7 +124,13 @@ boardroomInstance.newProposal("My New Dummy Proposal", address(0), 30 * unixDay,
 boardroomInstance.ProposalCreated({}, function(proposalCreatedError, proposalCreatedResult){
   console.log('New Proposal Listener', proposalCreatedError, proposalCreatedResult);
 });
+*/
 
+
+/*
+// =======================
+// VOTING ON A PROPOSAL
+// =======================
 
 // Vote on a Proposal (vote 1 "yes" on proposal ID 2)
 boardroomInstance.vote(2, 1, function(voteError, voteTxHash){
@@ -134,7 +141,13 @@ boardroomInstance.vote(2, 1, function(voteError, voteTxHash){
 boardroomInstance.VoteCounted({}, function(voteCountedError, voteCountedResult){
   console.log('Vote Counted', voteCountedError, voteCountedResult);
 });
+*/
 
+
+/*
+// =======================
+// EXECUTING A PROPOSAL
+// =======================
 
 // Execute a Proposal (with ID 2)
 boardroomInstance.execute(2, '', function(executeError, executeTxHash){
@@ -145,6 +158,7 @@ boardroomInstance.execute(2, '', function(executeError, executeTxHash){
 boardroomInstance.ProposalExecuted({}, function(proposalExecutedError, proposalExecutedResult){
   console.log('Proposal Executed', proposalExecutedError, proposalExecutedResult);
 });
+*/
 
 
 // Get Proposal Data (from proposal ID 2)
@@ -172,6 +186,18 @@ boardroomInstance.numProposals(function(numProposalsError, numProposals){
 });
 ```
 
+## Standard Deloyment Flow
+
+The standard BoardRoom contract deployment flow is as follows:
+
+[AnyRulesContractRequirements] => TheRulesContract.sol => BoardRoom.sol [=> Any Proxy.sol contracts]
+
+## Deploy Example OpenRules Board on Testnet
+  1. First create a JSON just outside the `boardroom-contracts` directory called `account.json`
+  2. In `account.json` put your account address and private key `{"address": "0x0..", "privateKey": "000..."}`
+  3. Make sure the account used has a Testnet ether balance
+  4. Run ethdpeloy: `npm run deploy:openboard`
+
 ## Test
 ```
 npm test
@@ -181,9 +207,3 @@ npm test
 ```
 npm run build
 ```
-
-## Deploy Example OpenRules Board on Testnet
-  1) First create a JSON just outside the `boardroom-contracts` directory called `account.json`
-  2) In `account.json` put your account address and private key `{"address": "0x0..", "privateKey": "000..."}`
-  3) Make sure the account used has a Testnet ether balance
-  4) Run ethdpeloy: `npm run deploy:openboard`
