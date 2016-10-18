@@ -19,11 +19,17 @@ contract SixtyPercentRule is Rules {
     }
 
     function canVote(address _sender, uint _proposalID) constant returns (bool) {
-        return true;
+        BoardRoom board = BoardRoom(msg.sender);
+        var (name, destination, proxy, value, validityHash, executed, debatePeriod, created) = board.proposals(_proposalID);
+        if(registry.isMember(_sender) && now < created + debatePeriod) {
+          return true;
+        }
     }
 
     function canPropose(address _sender) constant returns (bool) {
-        return true;
+        if(registry.isMember(_sender)) {
+          return true;
+        }
     }
 
     function votingWeightOf(address _sender, uint _proposalID) constant returns (uint) {
