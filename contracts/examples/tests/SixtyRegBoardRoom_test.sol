@@ -16,7 +16,7 @@ contract MemberProxy {
   }
 }
 
-contract EricRegBoardRoomTest is Test {
+contract SixtyRegBoardRoomTest is Test {
   OpenRegistry registry;
   OwnedProxy proxy;
   SixtyPercentRule rules;
