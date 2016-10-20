@@ -3,9 +3,10 @@ import "Rules.sol";
 import "BoardRoom.sol";
 
 contract CuratorRule is Rules {
-    function CuratorRule (address _registry){
+    function CuratorRule (address _registry, address[] _curators){
         registry = OpenRegistry(_registry);
         owner = msg.sender;
+        curators = _curators;
     }
 
     function hasWon(uint _proposalID) constant returns (bool) {
