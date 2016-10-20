@@ -1,6 +1,6 @@
 import "dapple/test.sol";
 import "BoardRoom.sol";
-import "examples/CuratorRule.sol";
+import "examples/CuratorRules.sol";
 import "examples/OpenRegistry.sol";
 import "OwnedProxy.sol";
 
@@ -17,11 +17,11 @@ contract MemberProxy {
 }
 
 contract DeployUser {
-  CuratorRule rules;
+  CuratorRules rules;
   BoardRoom board;
 
   function createRules (address _registry, address[] _curators) returns (address){
-    rules = new CuratorRule(address(_registry), _curators);
+    rules = new CuratorRules(address(_registry), _curators);
     return address(rules);
   }
 
@@ -35,10 +35,10 @@ contract DeployUser {
   }
 }
 
-contract CuratorRuleBoardRoomTest is Test {
+contract CuratorRulesBoardRoomTest is Test {
   OpenRegistry registry;
   OwnedProxy proxy;
-  CuratorRule rules;
+  CuratorRules rules;
   BoardRoom board;
   address [] curators;
   DeployUser duser;
@@ -56,7 +56,7 @@ contract CuratorRuleBoardRoomTest is Test {
 
     curators.push(address(member1));
 
-    rules = CuratorRule(duser.createRules(address(registry), curators));
+    rules = CuratorRules(duser.createRules(address(registry), curators));
     address boardAddr = duser.createBoard(address(rules));
 
     board = BoardRoom(boardAddr);

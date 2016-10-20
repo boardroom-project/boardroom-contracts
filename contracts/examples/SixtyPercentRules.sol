@@ -2,8 +2,8 @@ import "examples/OpenRegistry.sol";
 import "Rules.sol";
 import "BoardRoom.sol";
 
-contract SixtyPercentRule is Rules {
-    function SixtyPercentRule (address _registry){
+contract SixtyPercentRules is Rules {
+    function SixtyPercentRules (address _registry){
         registry = OpenRegistry(_registry);
     }
 

@@ -1,6 +1,6 @@
 import "dapple/test.sol";
 import "BoardRoom.sol";
-import "examples/SixtyPercentRule.sol";
+import "examples/SixtyPercentRules.sol";
 import "examples/OpenRegistry.sol";
 import "OwnedProxy.sol";
 
@@ -16,10 +16,10 @@ contract MemberProxy {
   }
 }
 
-contract SixtyRegBoardRoomTest is Test {
+contract SixtyPercentBoardRoomTest is Test {
   OpenRegistry registry;
   OwnedProxy proxy;
-  SixtyPercentRule rules;
+  SixtyPercentRules rules;
   BoardRoom board;
   MemberProxy member1;
 
@@ -27,7 +27,7 @@ contract SixtyRegBoardRoomTest is Test {
     member1 = new MemberProxy();
     registry = new OpenRegistry();
     registry.register(address(member1));
-    rules = new SixtyPercentRule(address(registry));
+    rules = new SixtyPercentRules(address(registry));
     board = new BoardRoom(address(rules));
   }
 
