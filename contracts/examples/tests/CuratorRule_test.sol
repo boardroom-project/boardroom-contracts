@@ -1,6 +1,6 @@
 import "dapple/test.sol";
 import "BoardRoom.sol";
-import "examples/SixtyPercentRule.sol";
+import "examples/CuratorRule.sol";
 import "examples/OpenRegistry.sol";
 import "OwnedProxy.sol";
 
@@ -16,19 +16,63 @@ contract MemberProxy {
   }
 }
 
-contract EricRegBoardRoomTest is Test {
+contract DeployUser {
+  CuratorRule rules;
+  BoardRoom board;
+
+  function createRules (address _registry, address[] _curators) returns (address){
+    rules = new CuratorRule(address(_registry), _curators);
+    return address(rules);
+  }
+
+  function createBoard (address _rules) returns (address) {
+    board = new BoardRoom(_rules);
+    return address(board);
+  }
+
+  function setupRules() {
+    rules.setup(address(board));
+  }
+}
+
+contract CuratorRuleBoardRoomTest is Test {
   OpenRegistry registry;
   OwnedProxy proxy;
-  SixtyPercentRule rules;
+  CuratorRule rules;
   BoardRoom board;
+  address [] curators;
+  DeployUser duser;
+
   MemberProxy member1;
 
   function setUp() {
     member1 = new MemberProxy();
     registry = new OpenRegistry();
     registry.register(address(member1));
-    rules = new SixtyPercentRule(address(registry));
+
+    duser = new DeployUser();
+    if (duser.send(500000)) {
+    }
+
+    curators.push(address(member1));
+
+    rules = CuratorRule(duser.createRules(address(registry), curators));
+    address boardAddr = duser.createBoard(address(rules));
+
+    board = BoardRoom(boardAddr);
+    duser.setupRules();
+
+    /*
+    rules = new CuratorRule(address(registry), curators);
     board = new BoardRoom(address(rules));
+
+    rules.setup(address(board));
+    */
+  }
+
+  function test_curators() {
+    assertEq(curators[0], address(member1));
+    assertTrue(rules.isCurator(address(member1)));
   }
 
   function test_openRegistry() {
@@ -36,20 +80,18 @@ contract EricRegBoardRoomTest is Test {
     assertEq(registry.members(0), address(member1));
   }
 
-  function test_SixtyPercentRules() {
+  function test_CuratorRules() {
     assertTrue(rules.canPropose(address(member1)));
     assertEq(rules.votingWeightOf(address(member1), 0), 1);
   }
 
-  function test_newProposalAndNotEnoughVotes() {
-    board = new BoardRoom(address(rules));
+  function test_curatorDoesVeto() {
     proxy = new OwnedProxy(address(board));
     if (proxy.send(600)){
     }
 
     address destinationAccount = address(new MemberProxy());
-    MemberProxy member1 = new MemberProxy();
-    registry.register(address(member1));
+
     MemberProxy member2 = new MemberProxy();
     registry.register(address(member2));
     MemberProxy member3 = new MemberProxy();
@@ -59,9 +101,10 @@ contract EricRegBoardRoomTest is Test {
     assertEq(member1.newProposal(address(board), "Does Jet Fuel Melt Steel Beams?", address(proxy), 30, destinationAccount, 400, ""), 0);
 
     member1.vote(address(board), 0, 0);
-    member2.vote(address(board), 0, 0);
-
-    assertEq(board.numVoters(0), 2);
+    member2.vote(address(board), 0, 1);
+    member3.vote(address(board), 0, 1);
+    member4.vote(address(board), 0, 1);
+    assertEq(board.numVoters(0), 4);
     assertEq(proxy.balance, 600);
     assertEq(destinationAccount.balance, 0);
     member1.execute(address(board), 0, "");
@@ -69,25 +112,22 @@ contract EricRegBoardRoomTest is Test {
     assertEq(destinationAccount.balance, 0);
   }
 
-  function test_YayIsOverSixtyPercent() {
-    board = new BoardRoom(address(rules));
+  function test_curatorDoesNotVeto() {
     proxy = new OwnedProxy(address(board));
-
-    if (proxy.send(600)) {
+    if (proxy.send(600)){
     }
 
     address destinationAccount = address(new MemberProxy());
-    MemberProxy member1 = new MemberProxy();
-    registry.register(address(member1));
     MemberProxy member2 = new MemberProxy();
     registry.register(address(member2));
     MemberProxy member3 = new MemberProxy();
     registry.register(address(member3));
     MemberProxy member4 = new MemberProxy();
     registry.register(address(member4));
-    assertEq(member2.newProposal(address(board), "Some Awesome Sauce Proposal", address(proxy), 30, destinationAccount, 400, ""), 0);
-    member1.vote(address(board), 0, 0);
-    member2.vote(address(board), 0, 1);
+    assertEq(member1.newProposal(address(board), "Does Jet Fuel Melt Steel Beams?", address(proxy), 30, destinationAccount, 400, ""), 0);
+
+    member1.vote(address(board), 0, 1);
+    member2.vote(address(board), 0, 0);
     member3.vote(address(board), 0, 1);
     member4.vote(address(board), 0, 1);
     assertEq(board.numVoters(0), 4);
@@ -97,32 +137,5 @@ contract EricRegBoardRoomTest is Test {
     assertEq(proxy.balance, 200);
     assertEq(destinationAccount.balance, 400);
   }
-  function test_YayIsNotOverSixtyPercent() {
-    board = new BoardRoom(address(rules));
-    proxy = new OwnedProxy(address(board));
 
-    if (proxy.send(600)) {
-    }
-
-    address destinationAccount = address(new MemberProxy());
-    MemberProxy member1 = new MemberProxy();
-    registry.register(address(member1));
-    MemberProxy member2 = new MemberProxy();
-    registry.register(address(member2));
-    MemberProxy member3 = new MemberProxy();
-    registry.register(address(member3));
-    MemberProxy member4 = new MemberProxy();
-    registry.register(address(member4));
-    assertEq(member2.newProposal(address(board), "Some Awesome Sauce Proposal", address(proxy), 30, destinationAccount, 400, ""), 0);
-    member1.vote(address(board), 0, 0);
-    member2.vote(address(board), 0, 0);
-    member3.vote(address(board), 0, 1);
-    member4.vote(address(board), 0, 1);
-    assertEq(board.numVoters(0), 4);
-    assertEq(proxy.balance, 600);
-    assertEq(destinationAccount.balance, 0);
-    member1.execute(address(board), 0, "");
-    assertEq(proxy.balance, 600);
-    assertEq(destinationAccount.balance, 0);
-  }
 }
