@@ -2,8 +2,8 @@ import "examples/OpenRegistry.sol";
 import "Rules.sol";
 import "BoardRoom.sol";
 
-contract CuratorRule is Rules {
-    function CuratorRule (address _registry, address[] _curators){
+contract CuratorRules is Rules {
+    function CuratorRules (address _registry, address[] _curators){
         registry = OpenRegistry(_registry);
         owner = msg.sender;
         curators = _curators;
