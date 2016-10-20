@@ -16,19 +16,63 @@ contract MemberProxy {
   }
 }
 
+contract DeployUser {
+  CuratorRule rules;
+  BoardRoom board;
+
+  function createRules (address _registry, address[] _curators) returns (address){
+    rules = new CuratorRule(address(_registry), _curators);
+    return address(rules);
+  }
+
+  function createBoard (address _rules) returns (address) {
+    board = new BoardRoom(_rules);
+    return address(board);
+  }
+
+  function setupRules() {
+    rules.setup(address(board));
+  }
+}
+
 contract CuratorRuleBoardRoomTest is Test {
   OpenRegistry registry;
   OwnedProxy proxy;
   CuratorRule rules;
   BoardRoom board;
+  address [] curators;
+  DeployUser duser;
+
   MemberProxy member1;
 
   function setUp() {
     member1 = new MemberProxy();
     registry = new OpenRegistry();
     registry.register(address(member1));
-    rules = new CuratorRule(address(registry));
+
+    duser = new DeployUser();
+    if (duser.send(500000)) {
+    }
+
+    curators.push(address(member1));
+
+    rules = CuratorRule(duser.createRules(address(registry), curators));
+    address boardAddr = duser.createBoard(address(rules));
+
+    board = BoardRoom(boardAddr);
+    duser.setupRules();
+
+    /*
+    rules = new CuratorRule(address(registry), curators);
     board = new BoardRoom(address(rules));
+
+    rules.setup(address(board));
+    */
+  }
+
+  function test_curators() {
+    assertEq(curators[0], address(member1));
+    assertTrue(rules.isCurator(address(member1)));
   }
 
   function test_openRegistry() {
@@ -42,15 +86,11 @@ contract CuratorRuleBoardRoomTest is Test {
   }
 
   function test_curatorDoesVeto() {
-    board = new BoardRoom(address(rules));
     proxy = new OwnedProxy(address(board));
     if (proxy.send(600)){
     }
 
     address destinationAccount = address(new MemberProxy());
-    MemberProxy member1 = new MemberProxy();
-    registry.register(address(member1));
-    rules.addCurator(address(member1));
 
     MemberProxy member2 = new MemberProxy();
     registry.register(address(member2));
@@ -73,15 +113,11 @@ contract CuratorRuleBoardRoomTest is Test {
   }
 
   function test_curatorDoesNotVeto() {
-    board = new BoardRoom(address(rules));
     proxy = new OwnedProxy(address(board));
     if (proxy.send(600)){
     }
 
     address destinationAccount = address(new MemberProxy());
-    MemberProxy member1 = new MemberProxy();
-    registry.register(address(member1));
-    rules.addCurator(address(member1));
     MemberProxy member2 = new MemberProxy();
     registry.register(address(member2));
     MemberProxy member3 = new MemberProxy();

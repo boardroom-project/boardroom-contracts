@@ -7,30 +7,33 @@ contract CuratorRule is Rules {
         registry = OpenRegistry(_registry);
         owner = msg.sender;
         curators = _curators;
+        for(uint i = 0; i < _curators.length; i++){
+          isCurator[_curators[i]] = true;
+        }
     }
 
     function hasWon(uint _proposalID) constant returns (bool) {
         uint nay = board.positionWeightOf(_proposalID, 0);
         uint yea = board.positionWeightOf(_proposalID, 1);
         uint totalVoters = board.numVoters(_proposalID);
-        
+
         for(uint i = 0; i < curators.length; i++){
-          var (position, weight, created) = board.voteOf(_proposalID,curators[i]);
-          if (position == 0 && isCurator[_proposalID,curators[i]] == true){
+          var (position, weight, created) = board.voteOf(_proposalID, curators[i]);
+          if (position == 0){
             return false;
           }
         }
-        
+
         if(totalVoters > 0 && yea > nay ) {
             return true;
         }
-        
+
         return false;
     }
-    
+
     function setup(address _board) {
         if (msg.sender == owner) {
-            board = _board;
+            board = BoardRoom(_board);
         }
     }
 
@@ -40,11 +43,11 @@ contract CuratorRule is Rules {
           isCurator[_curator] = true;
         }
     }
-    
+
     function removeCurator (address _curator) {
         if (msg.sender == address(board)){
             isCurator[_curator] = false;
-            
+
             for(uint i = 0; i < curators.length; i++){
                 if (curators[i] == _curator) {
                     delete curators[i];
@@ -69,9 +72,9 @@ contract CuratorRule is Rules {
     function votingWeightOf(address _sender, uint _proposalID) constant returns (uint) {
         return 1;
     }
-    
+
     address owner;
-    address board;
+    BoardRoom board;
     OpenRegistry public registry;
     address[] curators;
     mapping(address => bool) public isCurator;
