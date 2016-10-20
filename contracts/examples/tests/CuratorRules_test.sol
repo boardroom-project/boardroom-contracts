@@ -31,7 +31,7 @@ contract DeployUser {
   }
 
   function setupRules() {
-    rules.setup(address(board));
+    rules.configureBoard(address(board));
   }
 }
 
@@ -72,7 +72,7 @@ contract CuratorRulesBoardRoomTest is Test {
 
   function test_curators() {
     assertEq(curators[0], address(member1));
-    assertTrue(rules.isCurator(address(member1)));
+    assertTrue(rules.isCurator(address(board), address(member1)));
   }
 
   function test_openRegistry() {
@@ -81,6 +81,7 @@ contract CuratorRulesBoardRoomTest is Test {
   }
 
   function test_CuratorRules() {
+    rules.configureBoard(address(this));
     assertTrue(rules.canPropose(address(member1)));
     assertEq(rules.votingWeightOf(address(member1), 0), 1);
   }
