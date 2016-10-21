@@ -1,6 +1,6 @@
 import "dapple/test.sol";
 import "BoardRoom.sol";
-import "examples/CuratorRules.sol";
+import "examples/TorontoRules.sol";
 import "examples/OpenRegistry.sol";
 import "OwnedProxy.sol";
 
@@ -17,11 +17,11 @@ contract MemberProxy {
 }
 
 contract DeployUser {
-    CuratorRules rules;
+    TorontoRules rules;
     BoardRoom board;
 
     function createRules (address _registry, address[] _curators) returns (address){
-        rules = new CuratorRules(address(_registry), _curators);
+        rules = new TorontoRules(address(_registry), _curators);
         return address(rules);
     }
 
@@ -35,10 +35,10 @@ contract DeployUser {
     }
 }
 
-contract CuratorRulesBoardRoomTest is Test {
+contract TorontoRulesBoardRoomTest is Test {
     OpenRegistry registry;
     OwnedProxy proxy;
-    CuratorRules rules;
+    TorontoRules rules;
     BoardRoom board;
     address [] curators;
     DeployUser duser;
@@ -56,7 +56,7 @@ contract CuratorRulesBoardRoomTest is Test {
 
         curators.push(address(member1));
 
-        rules = CuratorRules(duser.createRules(address(registry), curators));
+        rules = TorontoRules(duser.createRules(address(registry), curators));
         address boardAddr = duser.createBoard(address(rules));
 
         board = BoardRoom(boardAddr);
@@ -80,7 +80,7 @@ contract CuratorRulesBoardRoomTest is Test {
         assertEq(registry.members(0), address(member1));
     }
 
-    function test_CuratorRules() {
+    function test_TorontoRules() {
         rules.configureBoard(address(this));
         assertTrue(rules.canPropose(address(member1)));
         assertEq(rules.votingWeightOf(address(member1), 0), 1);
@@ -137,6 +137,75 @@ contract CuratorRulesBoardRoomTest is Test {
         member1.execute(address(board), 0, "");
         assertEq(proxy.balance, 200);
         assertEq(destinationAccount.balance, 400);
+    }
+    function test_OverSixtyPercent() {
+        proxy = new OwnedProxy(address(board));
+        if (proxy.send(600)){
+        }
+
+        address destinationAccount = address(new MemberProxy());
+        MemberProxy member2 = new MemberProxy();
+        registry.register(address(member2));
+        MemberProxy member3 = new MemberProxy();
+        registry.register(address(member3));
+        MemberProxy member4 = new MemberProxy();
+        registry.register(address(member4));
+        assertEq(member1.newProposal(address(board), "Does Jet Fuel Melt Steel Beams?", address(proxy), 30, destinationAccount, 400, ""), 0);
+
+        member1.vote(address(board), 0, 1);
+        member2.vote(address(board), 0, 0);
+        member3.vote(address(board), 0, 1);
+        member4.vote(address(board), 0, 1);
+        assertEq(board.numVoters(0), 4);
+        assertEq(proxy.balance, 600);
+        assertEq(destinationAccount.balance, 0);
+        member1.execute(address(board), 0, "");
+        assertEq(proxy.balance, 200);
+        assertEq(destinationAccount.balance, 400);
 
     }
+
+    function test_FiftySixPercent() {
+        proxy = new OwnedProxy(address(board));
+        if (proxy.send(600)){
+        }
+
+        address destinationAccount = address(new MemberProxy());
+        MemberProxy member2 = new MemberProxy();
+        registry.register(address(member2));
+        MemberProxy member3 = new MemberProxy();
+        registry.register(address(member3));
+        MemberProxy member4 = new MemberProxy();
+        registry.register(address(member4));
+        MemberProxy member5 = new MemberProxy();
+        registry.register(address(member5));
+        MemberProxy member6 = new MemberProxy();
+        registry.register(address(member6));
+        MemberProxy member7 = new MemberProxy();
+        registry.register(address(member7));
+        MemberProxy member8 = new MemberProxy();
+        registry.register(address(member8));
+        MemberProxy member9 = new MemberProxy();
+        registry.register(address(member9));
+
+        assertEq(member1.newProposal(address(board), "Does Jet Fuel Melt Steel Beams?", address(proxy), 30, destinationAccount, 400, ""), 0);
+
+        member1.vote(address(board), 0, 1);
+        member2.vote(address(board), 0, 0);
+        member3.vote(address(board), 0, 0);
+        member4.vote(address(board), 0, 0);
+        member5.vote(address(board), 0, 0);
+        member6.vote(address(board), 0, 1);
+        member7.vote(address(board), 0, 1);
+        member8.vote(address(board), 0, 1);
+        member9.vote(address(board), 0, 1);
+        assertEq(board.numVoters(0), 9);
+        assertEq(proxy.balance, 600);
+        assertEq(destinationAccount.balance, 0);
+        member1.execute(address(board), 0, "");
+        assertEq(proxy.balance, 600);
+        assertEq(destinationAccount.balance, 0);
+
+    }
+
 }
