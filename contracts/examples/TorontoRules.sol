@@ -11,10 +11,12 @@ contract TorontoRules is Rules {
     function hasWon(uint _proposalID) boardIsConfigured(msg.sender) constant returns (bool) {
         BoardRoom board = BoardRoom(msg.sender);
 
+        // get voting positions for nay (i.e. 0) and yay (i.e. 1)
         uint nay = board.positionWeightOf(_proposalID, 0);
         uint yea = board.positionWeightOf(_proposalID, 1);
         uint totalVoters = board.numVoters(_proposalID);
 
+        // check if curators voted against proposal
         for(uint i = 0; i < curators[msg.sender].length; i++){
           var (position, weight, created) = board.voteOf(_proposalID, curators[msg.sender][i]);
           if (position == 0){
@@ -22,9 +24,12 @@ contract TorontoRules is Rules {
           }
         }
 
+        // 50 percent of the members have to vote, 60% majority is a pass
         if(yea*10 > (nay + yea)*6 && (nay + yea)*10 > registry.numMembers()*5) {
             return true;
         }
+        
+        // else the proposal has failed
         return false;
     }
 
@@ -40,21 +45,25 @@ contract TorontoRules is Rules {
         for(uint i = 0 ; i < curators[_board].length ; i++){
           isCurator[_board][curators[_board][i]] = true;
         }
+        
+        // set board to configured
         isConfigured[_board] = true;
       }
     }
 
-    function addCurator (address _curator){
+    function addCurator (address _curator) boardIsConfigured(msg.sender) {
         BoardRoom board = BoardRoom(msg.sender);
 
+        // add curator to this board
         curators[msg.sender].push(_curator);
         isCurator[msg.sender][_curator] = true;
     }
 
-    function removeCurator (address _curator) {
+    function removeCurator (address _curator) boardIsConfigured(msg.sender) {
         BoardRoom board = BoardRoom(msg.sender);
         isCurator[msg.sender][_curator] = false;
 
+        // remove curator from this board
         for(uint i = 0; i < curators[msg.sender].length; i++){
             if (curators[msg.sender][i] == _curator) {
                 delete curators[msg.sender][i];
