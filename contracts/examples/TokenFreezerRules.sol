@@ -32,7 +32,7 @@ contract TokenFreezerRules is Rules {
   }
 
   function canPropose(address _sender) constant returns (bool) {
-    if(token.balanceOf(_sender) > 0) {
+    if(token.balanceOf(_sender) > 0 && !board.hasVoted(_proposalID, _sender)) {
       return true;
     }
   }
