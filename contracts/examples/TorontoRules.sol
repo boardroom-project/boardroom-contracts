@@ -75,7 +75,7 @@ contract TorontoRules is Rules {
         BoardRoom board = BoardRoom(msg.sender);
 
         var (name, destination, proxy, value, validityHash, executed, debatePeriod, created) = board.proposals(_proposalID);
-        if(registry.isMember(_sender) && now < created + debatePeriod) {
+        if(registry.isMember(_sender) && now < created + debatePeriod && !board.hasVoted(_proposalID, _sender)) {
             return true;
         }
     }
