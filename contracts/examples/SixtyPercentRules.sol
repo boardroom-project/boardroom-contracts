@@ -27,7 +27,7 @@ contract SixtyPercentRules is Rules {
     }
 
     function canPropose(address _sender) constant returns (bool) {
-        if(registry.isMember(_sender)) {
+        if(registry.isMember(_sender) && !board.hasVoted(_proposalID, _sender)) {
           return true;
         }
     }
