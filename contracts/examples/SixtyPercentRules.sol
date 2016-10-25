@@ -20,14 +20,19 @@ contract SixtyPercentRules is Rules {
 
     function canVote(address _sender, uint _proposalID) constant returns (bool) {
         BoardRoom board = BoardRoom(msg.sender);
-        var (name, destination, proxy, value, validityHash, executed, debatePeriod, created) = board.proposals(_proposalID);
-        if(registry.isMember(_sender) && now < created + debatePeriod) {
+
+        uint created = board.createdOn(_proposalID);
+        uint debatePeriod = board.debatePeriodOf(_proposalID);
+
+        if(registry.isMember(_sender)
+          && now < created + debatePeriod
+          && !board.hasVoted(_proposalID, _sender)) {
           return true;
         }
     }
 
     function canPropose(address _sender) constant returns (bool) {
-        if(registry.isMember(_sender) && !board.hasVoted(_proposalID, _sender)) {
+        if(registry.isMember(_sender)) {
           return true;
         }
     }
@@ -35,5 +40,6 @@ contract SixtyPercentRules is Rules {
     function votingWeightOf(address _sender, uint _proposalID) constant returns (uint) {
         return 1;
     }
+    
     OpenRegistry public registry;
 }

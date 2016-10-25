@@ -9,7 +9,7 @@ contract TokenFreezerRules is Rules {
 
   function hasWon(uint _proposalID) constant returns (bool) {
     BoardRoom board = BoardRoom(msg.sender);
-    var (name, destination, proxy, value, hash, executed, debatePeriod, created) = board.proposals(_proposalID);
+
     uint nay = board.positionWeightOf(_proposalID, 0);
     uint yea = board.positionWeightOf(_proposalID, 1);
 
@@ -21,7 +21,9 @@ contract TokenFreezerRules is Rules {
 
   function canVote(address _sender, uint _proposalID) constant returns (bool) {
     BoardRoom board = BoardRoom(msg.sender);
-    var (name, destination, proxy, value, hash, executed, debatePeriod, created) =  board.proposals(_proposalID);
+
+    uint created = board.createdOn(_proposalID);
+    uint debatePeriod = board.debatePeriodOf(_proposalID);
 
     if(votingWeightOf(_sender, _proposalID) > 0
       && now < (created + debatePeriod)
@@ -32,7 +34,7 @@ contract TokenFreezerRules is Rules {
   }
 
   function canPropose(address _sender) constant returns (bool) {
-    if(token.balanceOf(_sender) > 0 && !board.hasVoted(_proposalID, _sender)) {
+    if(token.balanceOf(_sender) > 0) {
       return true;
     }
   }

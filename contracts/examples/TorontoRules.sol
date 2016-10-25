@@ -28,7 +28,7 @@ contract TorontoRules is Rules {
         if(yea*10 > (nay + yea)*6 && (nay + yea)*10 > registry.numMembers()*5) {
             return true;
         }
-        
+
         // else the proposal has failed
         return false;
     }
@@ -45,7 +45,7 @@ contract TorontoRules is Rules {
         for(uint i = 0 ; i < curators[_board].length ; i++){
           isCurator[_board][curators[_board][i]] = true;
         }
-        
+
         // set board to configured
         isConfigured[_board] = true;
       }
@@ -74,8 +74,12 @@ contract TorontoRules is Rules {
     function canVote(address _sender, uint _proposalID) boardIsConfigured(msg.sender) constant returns (bool) {
         BoardRoom board = BoardRoom(msg.sender);
 
-        var (name, destination, proxy, value, validityHash, executed, debatePeriod, created) = board.proposals(_proposalID);
-        if(registry.isMember(_sender) && now < created + debatePeriod && !board.hasVoted(_proposalID, _sender)) {
+        uint created = board.createdOn(_proposalID);
+        uint debatePeriod = board.debatePeriodOf(_proposalID);
+
+        if(registry.isMember(_sender)
+          && now < created + debatePeriod
+          && !board.hasVoted(_proposalID, _sender)) {
             return true;
         }
     }

@@ -190,7 +190,7 @@ contract PolarBoardRoomTests is Test {
     assertEq(proxy.balance, 1000);
     member5.execute(address(board), 0, "");
     assertEq(proxy.balance, 400);
-    var (p1_name, p1_destination, p1_proxy, p1_value, p1_validityHash, p1_executed, p1_debatePeriod, p1_created) = board.proposals(0);
+    var (p1_name, p1_destination, p1_proxy, p1_value, p1_validityHash, p1_executed, p1_debatePeriod, p1_created, p1_from) = board.proposals(0);
     assertTrue(p1_executed);
     assertEq(destinationAccount.balance, 600);
   }
