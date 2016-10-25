@@ -44,24 +44,25 @@ contract TorontoRulesBoardRoomTest is Test {
     DeployUser duser;
 
     MemberProxy member1;
-
+    MemberProxy bigboss;
     function setUp() {
         member1 = new MemberProxy();
+        bigboss = new MemberProxy();
         registry = new OpenRegistry();
         registry.register(address(member1));
-
+        registry.register(address(bigboss));
         duser = new DeployUser();
         if (duser.send(500000)) {
         }
 
         curators.push(address(member1));
-
+        curators.push(address(bigboss));
         rules = TorontoRules(duser.createRules(address(registry), curators));
         address boardAddr = duser.createBoard(address(rules));
 
         board = BoardRoom(boardAddr);
         duser.setupRules();
-
+       // rules.addCurator(address(bigboss));
         /*
         rules = new CuratorRule(address(registry), curators);
         board = new BoardRoom(address(rules));
@@ -173,6 +174,7 @@ contract TorontoRulesBoardRoomTest is Test {
         address destinationAccount = address(new MemberProxy());
         MemberProxy member2 = new MemberProxy();
         registry.register(address(member2));
+        rules.addCurator(address(member2));
         MemberProxy member3 = new MemberProxy();
         registry.register(address(member3));
         MemberProxy member4 = new MemberProxy();
@@ -193,13 +195,14 @@ contract TorontoRulesBoardRoomTest is Test {
         member1.vote(address(board), 0, 1);
         member2.vote(address(board), 0, 0);
         member3.vote(address(board), 0, 0);
-        member4.vote(address(board), 0, 0);
-        member5.vote(address(board), 0, 0);
+        member4.vote(address(board), 0, 1);
+        member5.vote(address(board), 0, 1);
         member6.vote(address(board), 0, 1);
         member7.vote(address(board), 0, 1);
         member8.vote(address(board), 0, 1);
         member9.vote(address(board), 0, 1);
-        assertEq(board.numVoters(0), 9);
+        bigboss.vote(address(board), 0, 0);
+        assertEq(board.numVoters(0), 10);
         assertEq(proxy.balance, 600);
         assertEq(destinationAccount.balance, 0);
         member1.execute(address(board), 0, "");
