@@ -53,6 +53,8 @@ Here are some other Rules contract examples, found in `contracts/examples`, plea
  5. [OpenRegistryRules](https://github.com/boardroom-project/boardroom-contracts/blob/master/contracts/examples/OpenRegistryRules.sol) - Anyone Can Register as Member, Voting Weight 1
  6. [CampaignRules](https://github.com/boardroom-project/boardroom-contracts/blob/master/contracts/examples/CampaignRules.sol) - WeiFund StandardCampaign Contribution Amount = Voting Weight/Membership
  7. [MetaRules](https://github.com/boardroom-project/boardroom-contracts/blob/master/contracts/examples/MetaRules.sol) - Typed Proposals, Rules Contract per Proposal Type (good for multi-class share voting)
+ 8. [OpenRules](https://github.com/boardroom-project/boardroom-contracts/blob/master/contracts/examples/MetaRules.sol) - Any account can vote, propose, voting weight = 1, yay > nay to win
+ 9. [SingleAccountRules](https://github.com/boardroom-project/boardroom-contracts/blob/master/contracts/examples/SingleAccountRules.sol) - A single account can vote, propose, anything proposed wins
 
 ## Contract Interfaces
 
