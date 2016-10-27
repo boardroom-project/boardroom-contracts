@@ -1,14 +1,22 @@
+pragma solidity ^0.4.3;
+
 import "examples/OpenRegistry.sol";
 import "Rules.sol";
 import "BoardRoom.sol";
 
 contract CuratorRules is Rules {
-    function CuratorRules (address _registry, address[] _curators){
+    modifier boardIsConfigured (address _board) {
+        if (isConfigured[_board]) {
+          _;
+        }
+    }
+
+    function CuratorRules (address _registry, address[] _curators) {
         registry = OpenRegistry(_registry);
         curators[address(this)] = _curators;
     }
 
-    function hasWon(uint _proposalID) boardIsConfigured(msg.sender) constant returns (bool) {
+    function hasWon(uint _proposalID) boardIsConfigured(msg.sender) public constant returns (bool) {
         BoardRoom board = BoardRoom(msg.sender);
 
         uint nay = board.positionWeightOf(_proposalID, 0);
@@ -29,13 +37,7 @@ contract CuratorRules is Rules {
         return false;
     }
 
-    modifier boardIsConfigured (address _board) {
-        if (isConfigured[_board]) {
-          _
-        }
-    }
-
-    function configureBoard(address _board) {
+    function configureBoard(address _board) public {
       if(!isConfigured[_board]){
         curators[_board] = curators[address(this)];
         for(uint i = 0 ; i < curators[_board].length ; i++){
@@ -45,14 +47,14 @@ contract CuratorRules is Rules {
       }
     }
 
-    function addCurator (address _curator){
+    function addCurator (address _curator) public {
         BoardRoom board = BoardRoom(msg.sender);
 
         curators[msg.sender].push(_curator);
         isCurator[msg.sender][_curator] = true;
     }
 
-    function removeCurator (address _curator) {
+    function removeCurator (address _curator) public {
         BoardRoom board = BoardRoom(msg.sender);
         isCurator[msg.sender][_curator] = false;
 
@@ -63,7 +65,7 @@ contract CuratorRules is Rules {
         }
     }
 
-    function canVote(address _sender, uint _proposalID) boardIsConfigured(msg.sender) constant returns (bool) {
+    function canVote(address _sender, uint _proposalID) boardIsConfigured(msg.sender) public constant returns (bool) {
         BoardRoom board = BoardRoom(msg.sender);
 
         uint created = board.createdOn(_proposalID);
@@ -76,13 +78,13 @@ contract CuratorRules is Rules {
         }
     }
 
-    function canPropose(address _sender) boardIsConfigured(msg.sender) constant returns (bool) {
+    function canPropose(address _sender) boardIsConfigured(msg.sender) public constant returns (bool) {
         if(registry.isMember(_sender)) {
             return true;
         }
     }
 
-    function votingWeightOf(address _sender, uint _proposalID) constant returns (uint) {
+    function votingWeightOf(address _sender, uint _proposalID) public constant returns (uint) {
         return 1;
     }
 

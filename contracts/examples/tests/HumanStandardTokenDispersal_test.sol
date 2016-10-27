@@ -1,3 +1,5 @@
+pragma solidity ^0.4.3;
+
 import "dapple/test.sol";
 import "examples/HumanStandardToken.sol";
 import "examples/HumanStandardTokenDispersal.sol";

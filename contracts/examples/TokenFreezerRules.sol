@@ -1,13 +1,15 @@
+pragma solidity ^0.4.3;
+
 import "Rules.sol";
 import "examples/StandardTokenFreezer.sol";
 import "BoardRoom.sol";
 
 contract TokenFreezerRules is Rules {
-  function TokenFreezerRules(address _freezer) {
+  function TokenFreezerRules (address _freezer) public {
     token = StandardTokenFreezer(_freezer);
   }
 
-  function hasWon(uint _proposalID) constant returns (bool) {
+  function hasWon (uint _proposalID) public constant returns (bool) {
     BoardRoom board = BoardRoom(msg.sender);
 
     uint nay = board.positionWeightOf(_proposalID, 0);
@@ -19,7 +21,7 @@ contract TokenFreezerRules is Rules {
     }
   }
 
-  function canVote(address _sender, uint _proposalID) constant returns (bool) {
+  function canVote (address _sender, uint _proposalID) public constant returns (bool) {
     BoardRoom board = BoardRoom(msg.sender);
 
     uint created = board.createdOn(_proposalID);
@@ -33,13 +35,13 @@ contract TokenFreezerRules is Rules {
     }
   }
 
-  function canPropose(address _sender) constant returns (bool) {
+  function canPropose (address _sender) public constant returns (bool) {
     if(token.balanceOf(_sender) > 0) {
       return true;
     }
   }
 
-  function votingWeightOf(address _sender, uint _proposalID) constant returns (uint) {
+  function votingWeightOf (address _sender, uint _proposalID) public constant returns (uint) {
     return token.balanceOf(_sender);
   }
 

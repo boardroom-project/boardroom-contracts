@@ -1,13 +1,15 @@
+pragma solidity ^0.4.3;
+
 import "examples/OpenRegistry.sol";
 import "Rules.sol";
 import "BoardRoom.sol";
 
 contract OpenRegistryRules is Rules {
-  function OpenRegistryRules(address _registry){
+  function OpenRegistryRules(address _registry) public {
     registry = OpenRegistry(_registry);
   }
 
-  function hasWon(uint _proposalID) constant returns (bool) {
+  function hasWon(uint _proposalID) public constant returns (bool) {
     BoardRoom board = BoardRoom(msg.sender);
 
     uint nay = board.positionWeightOf(_proposalID, 0);
@@ -19,7 +21,7 @@ contract OpenRegistryRules is Rules {
     }
   }
 
-  function canVote(address _sender, uint _proposalID) constant returns (bool) {
+  function canVote(address _sender, uint _proposalID) public constant returns (bool) {
     BoardRoom board = BoardRoom(msg.sender);
 
     uint created = board.createdOn(_proposalID);
@@ -32,13 +34,13 @@ contract OpenRegistryRules is Rules {
     }
   }
 
-  function canPropose(address _sender) constant returns (bool) {
+  function canPropose(address _sender) public constant returns (bool) {
     if(registry.isMember(_sender)) {
       return true;
     }
   }
 
-  function votingWeightOf(address _sender, uint _proposalID) constant returns (uint) {
+  function votingWeightOf(address _sender, uint _proposalID) public constant returns (uint) {
     return 1;
   }
 

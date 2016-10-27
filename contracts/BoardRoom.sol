@@ -1,3 +1,5 @@
+pragma solidity ^0.4.3;
+
 import "Rules.sol";
 import "Proxy.sol";
 
@@ -34,27 +36,30 @@ contract BoardRoom is BoardRoomInterface {
 
   modifier canpropose {
     if(rules.canPropose(msg.sender)) {
-      _
+      _;
     }
   }
 
   modifier canvote (uint _proposalID) {
     if(rules.canVote(msg.sender, _proposalID)) {
-      _
+      _;
     }
   }
 
   modifier haswon(uint _proposalID) {
     if(rules.hasWon(_proposalID)) {
-      _
+      _;
     }
   }
 
   modifier onlyself() {
     if(msg.sender == address(this)) {
-      _
+      _;
     }
   }
+  
+  /// @notice The contract fallback function
+  function () payable public {}
 
   function newProposal(string _name, address _proxy, uint _debatePeriod, address _destination, uint _value, bytes _calldata) canpropose returns (uint proposalID) {
     proposalID = proposals.length++;

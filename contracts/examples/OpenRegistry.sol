@@ -1,10 +1,12 @@
+pragma solidity ^0.4.3;
+
 contract OpenRegistry {
-  function register(address _someMember) {
+  function register(address _someMember) public {
     members.push(_someMember);
     isMember[_someMember] = true;
   }
 
-  function numMembers() returns (uint) {
+  function numMembers() public constant returns (uint) {
     return members.length;
   }
 

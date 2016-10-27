@@ -1,3 +1,5 @@
+pragma solidity ^0.4.3;
+
 import "examples/StandardToken.sol";
 
 contract StandardTokenFreezerInterface {
@@ -9,11 +11,11 @@ contract StandardTokenFreezerInterface {
 }
 
 contract StandardTokenFreezer is StandardTokenFreezerInterface {
-  function StandardTokenFreezer(address _token) {
+  function StandardTokenFreezer(address _token) public {
     token = StandardToken(_token);
   }
 
-  function freezeAllowance(uint _daysToThaw) returns (uint amountFrozen) {
+  function freezeAllowance (uint _daysToThaw) public returns (uint amountFrozen) {
     amountFrozen = token.allowance(msg.sender, address(this));
 
     if(amountFrozen > 0
@@ -27,14 +29,14 @@ contract StandardTokenFreezer is StandardTokenFreezerInterface {
     }
   }
 
-  function extendFreezeBy(uint _days) {
+  function extendFreezeBy (uint _days) public {
     if(_days > 0) {
       thawBy[msg.sender] += _days * 1 days;
       FreezeExtended(msg.sender, _days);
     }
   }
 
-  function withdrawBalance() returns (uint amountWithdrawn) {
+  function withdrawBalance () public returns (uint amountWithdrawn) {
     if(now > thawBy[msg.sender]) {
       amountWithdrawn = balances[msg.sender];
       balances[msg.sender] = 0;
@@ -45,11 +47,11 @@ contract StandardTokenFreezer is StandardTokenFreezerInterface {
     }
   }
 
-  function balanceOf(address _from) constant returns (uint balance) {
+  function balanceOf (address _from) public constant returns (uint balance) {
     return balances[_from];
   }
 
-  function frozenUntil(address _from) constant returns (uint thawDate) {
+  function frozenUntil (address _from) public constant returns (uint thawDate) {
     return thawBy[_from];
   }
 

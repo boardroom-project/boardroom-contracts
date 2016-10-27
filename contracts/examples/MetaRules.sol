@@ -1,3 +1,5 @@
+pragma solidity ^0.4.3;
+
 import "BoardRoom.sol";
 import "Rules.sol";
 import "examples/ProposalTypeRegistry.sol";
@@ -12,12 +14,12 @@ import "examples/ProposalTypeRegistry.sol";
 // you can now register proposals under multiple share classes
 
 contract MetaRules {
-  function MetaRules(address _proposalTypeRegisty, address[] _rulesRegistry) {
+  function MetaRules(address _proposalTypeRegisty, address[] _rulesRegistry) public {
     registry = ProposalTypeRegistry(_proposalTypeRegisty);
     rulesRegistry = _rulesRegistry;
   }
 
-  function hasWon(uint _proposalID) constant returns (bool) {
+  function hasWon(uint _proposalID) public constant returns (bool) {
     Rules selectedRules = Rules(rulesRegistry[registry.typeOf(msg.sender, _proposalID)]);
 
     if (registry.typeOf(msg.sender, _proposalID) != 0 && registry.isTyped(msg.sender, _proposalID)) {
@@ -27,20 +29,20 @@ contract MetaRules {
     }
   }
 
-  function canVote(address _sender, uint _proposalID) constant returns (bool) {
+  function canVote(address _sender, uint _proposalID) public constant returns (bool) {
     Rules selectedRules = Rules(rulesRegistry[registry.typeOf(msg.sender, _proposalID)]);
 
     return selectedRules.canVote(_sender, _proposalID);
   }
 
-  function canPropose(address _sender) constant returns (bool) {
+  function canPropose(address _sender) public constant returns (bool) {
     Rules selectedRules = Rules(rulesRegistry[0]);
 
     // base rules are denoted as 0
     return selectedRules.canPropose(_sender);
   }
 
-  function votingWeightOf(address _sender, uint _proposalID) constant returns (uint) {
+  function votingWeightOf(address _sender, uint _proposalID) public constant returns (uint) {
     Rules selectedRules = Rules(rulesRegistry[registry.typeOf(msg.sender, _proposalID)]);
 
     return selectedRules.votingWeightOf(_sender, _proposalID);

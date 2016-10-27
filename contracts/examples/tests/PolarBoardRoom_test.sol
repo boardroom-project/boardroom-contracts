@@ -1,3 +1,6 @@
+pragma solidity ^0.4.3;
+
+
 import "dapple/test.sol";
 import "BoardRoom.sol";
 import "OwnedProxy.sol";
@@ -8,6 +11,9 @@ import "examples/StandardTokenFreezer.sol";
 import "examples/TokenFreezerRules.sol";
 
 contract BoardMemberProxy {
+  /// @notice The contract fallback function
+  function () payable public {}
+
   function createHumanStandardToken(address _factory, uint256 _initialAmount, string _name, uint8 _decimals, string _symbol) returns (address) {
     return HumanStandardTokenFactory(_factory).createHumanStandardToken(_initialAmount, _name, _decimals, _symbol);
   }
@@ -68,11 +74,71 @@ contract PolarBoardRoomTests is Test {
     rules = new TokenFreezerRules(address(freezer));
     board = new BoardRoom(address(rules));
     proxy = new OwnedProxy(address(board));
+
     if (!proxy.send(1000)) {
       throw;
     }
   }
 
+  function test_polarBoardInstance() {
+    // setup member 1
+    assertTrue(member1.approve(address(token), address(freezer), 500));
+    assertEq(member1.freezeAllowance(address(freezer), 60), 500);
+    assertEq(freezer.balanceOf(address(member1)), 500);
+
+    // setup member 2
+    assertTrue(member1.transfer(address(token), address(member2), 500));
+    assertTrue(member2.approve(address(token), address(freezer), 500));
+    assertEq(member2.freezeAllowance(address(freezer), 60), 500);
+    assertEq(freezer.balanceOf(address(member1)), 500);
+
+    // setup member 3
+    assertTrue(member1.transfer(address(token), address(member3), 500));
+    assertTrue(member3.approve(address(token), address(freezer), 500));
+    assertEq(member3.freezeAllowance(address(freezer), 60), 500);
+    assertEq(freezer.balanceOf(address(member1)), 500);
+
+    // setup member 4
+    assertTrue(member1.transfer(address(token), address(member4), 500));
+    assertTrue(member4.approve(address(token), address(freezer), 500));
+    assertEq(member4.freezeAllowance(address(freezer), 60), 500);
+    assertEq(freezer.balanceOf(address(member1)), 500);
+
+    // setup member 5
+    assertTrue(member1.transfer(address(token), address(member5), 500));
+    assertTrue(member5.approve(address(token), address(freezer), 500));
+    assertEq(member5.freezeAllowance(address(freezer), 60), 500);
+    assertEq(freezer.balanceOf(address(member1)), 500);
+
+    // setup member 6
+    //assertTrue(member1.transfer(address(token), address(member6), 500));
+    //assertTrue(member6.approve(address(token), address(freezer), 500));
+    //assertEq(member6.freezeAllowance(address(freezer), 60), 500);
+    //assertEq(freezer.balanceOf(address(member1)), 500);
+
+    assertEq(member3.newProposal(address(board),
+    "Some new Proposal", address(proxy),
+     30, address(destinationAccount), 600, ""), 0);
+    assertEq(board.numProposals(), 1);
+    assertEq(member1.vote(address(board), 0, 1), 500);
+    assertEq(board.numVoters(0), 1);
+    assertEq(member2.vote(address(board), 0, 0), 500);
+    assertEq(member3.vote(address(board), 0, 1), 500);
+    assertEq(board.numVoters(0), 3);
+    assertEq(member4.vote(address(board), 0, 1), 500);
+    assertEq(member5.vote(address(board), 0, 0), 500);
+    assertEq(board.numVoters(0), 5);
+
+    assertEq(destinationAccount.balance, 0);
+    assertEq(proxy.balance, 1000);
+    member5.execute(address(board), 0, "");
+    assertEq(proxy.balance, 400);
+    var (p1_name, p1_destination, p1_proxy, p1_value, p1_validityHash, p1_executed, p1_debatePeriod, p1_created, p1_from) = board.proposals(0);
+    assertTrue(p1_executed);
+    assertEq(destinationAccount.balance, 600);
+  }
+
+  /*
   function test_spamApproveAndFreeze() {
   }
 
@@ -134,64 +200,5 @@ contract PolarBoardRoomTests is Test {
   }
 
   function test_validProxyFundTransfer() {
-  }
-
-  function test_polarBoardRoom() {
-    // setup member 1
-    assertTrue(member1.approve(address(token), address(freezer), 500));
-    assertEq(member1.freezeAllowance(address(freezer), 60), 500);
-    assertEq(freezer.balanceOf(address(member1)), 500);
-
-    // setup member 2
-    assertTrue(member1.transfer(address(token), address(member2), 500));
-    assertTrue(member2.approve(address(token), address(freezer), 500));
-    assertEq(member2.freezeAllowance(address(freezer), 60), 500);
-    assertEq(freezer.balanceOf(address(member1)), 500);
-
-    // setup member 3
-    assertTrue(member1.transfer(address(token), address(member3), 500));
-    assertTrue(member3.approve(address(token), address(freezer), 500));
-    assertEq(member3.freezeAllowance(address(freezer), 60), 500);
-    assertEq(freezer.balanceOf(address(member1)), 500);
-
-    // setup member 4
-    assertTrue(member1.transfer(address(token), address(member4), 500));
-    assertTrue(member4.approve(address(token), address(freezer), 500));
-    assertEq(member4.freezeAllowance(address(freezer), 60), 500);
-    assertEq(freezer.balanceOf(address(member1)), 500);
-
-    // setup member 5
-    assertTrue(member1.transfer(address(token), address(member5), 500));
-    assertTrue(member5.approve(address(token), address(freezer), 500));
-    assertEq(member5.freezeAllowance(address(freezer), 60), 500);
-    assertEq(freezer.balanceOf(address(member1)), 500);
-
-    // setup member 6
-    assertTrue(member1.transfer(address(token), address(member6), 500));
-    assertTrue(member6.approve(address(token), address(freezer), 500));
-    assertEq(member6.freezeAllowance(address(freezer), 60), 500);
-    assertEq(freezer.balanceOf(address(member1)), 500);
-
-    assertEq(member3.newProposal(address(board),
-    "Some new Proposal", address(proxy),
-     30, address(destinationAccount), 600, ""), 0);
-    assertEq(board.numProposals(), 1);
-    assertEq(member1.vote(address(board), 0, 1), 500);
-    assertEq(board.numVoters(0), 1);
-    assertEq(member2.vote(address(board), 0, 0), 500);
-    assertEq(member3.vote(address(board), 0, 1), 500);
-    assertEq(board.numVoters(0), 3);
-    assertEq(member4.vote(address(board), 0, 1), 500);
-    assertEq(member5.vote(address(board), 0, 0), 500);
-    assertEq(member6.vote(address(board), 0, 1), 500);
-    assertEq(board.numVoters(0), 6);
-
-    assertEq(destinationAccount.balance, 0);
-    assertEq(proxy.balance, 1000);
-    member5.execute(address(board), 0, "");
-    assertEq(proxy.balance, 400);
-    var (p1_name, p1_destination, p1_proxy, p1_value, p1_validityHash, p1_executed, p1_debatePeriod, p1_created, p1_from) = board.proposals(0);
-    assertTrue(p1_executed);
-    assertEq(destinationAccount.balance, 600);
-  }
+  }*/
 }

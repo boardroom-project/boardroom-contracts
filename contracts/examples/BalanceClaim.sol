@@ -1,3 +1,5 @@
+pragma solidity ^0.4.3;
+
 import "examples/Owner.sol";
 
 contract BalanceClaimInterface {
@@ -6,6 +8,9 @@ contract BalanceClaimInterface {
 }
 
 contract BalanceClaim is Owner, BalanceClaimInterface {
+  /// @notice The contract fallback function
+  function () payable public {}
+
   /// @notice The BalanceClaim constructor method
   /// @param _owner the address of the balance claim owner
   function BalanceClaim(address _owner) {

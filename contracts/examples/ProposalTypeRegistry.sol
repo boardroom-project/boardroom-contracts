@@ -1,3 +1,5 @@
+pragma solidity ^0.4.3;
+
 import "BoardRoom.sol";
 
 contract ProposalTypeRegistryInterface {
@@ -19,7 +21,7 @@ contract ProposalTypeRegistry is ProposalTypeRegistryInterface {
     if (from == msg.sender && !typed[_board][_proposalId]) {
       typed[_board][_proposalId] = true;
       types[_board][_proposalId] = _type;
-      
+
       ProposalTypeRegistered(_board, _proposalId);
     }
   }
