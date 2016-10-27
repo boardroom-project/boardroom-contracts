@@ -56,6 +56,8 @@ Here are some other Rules contract examples, found in `contracts/examples`, plea
  8. [OpenRules](https://github.com/boardroom-project/boardroom-contracts/blob/master/contracts/examples/OpenRules.sol) - Any account can vote, propose, voting weight = 1, yay > nay to win
  9. [SingleAccountRules](https://github.com/boardroom-project/boardroom-contracts/blob/master/contracts/examples/SingleAccountRules.sol) - A single account can vote, propose, anything proposed wins
  10. [MultiSigRules](https://github.com/boardroom-project/boardroom-contracts/blob/master/contracts/examples/MultiSigRules.sol) - 100% consensus required to win, signatories can propose, yay vote is signoff
+ 11. [DecayingQuorumRules](https://github.com/boardroom-project/boardroom-contracts/blob/master/contracts/examples/DecayingQuorumRules.sol) - Min quorum to win decays over block time
+ 12. [BondRules](https://github.com/boardroom-project/boardroom-contracts/blob/master/contracts/examples/BondRules.sol) - A bond is required for voting, and a proposal to pass
 
 ## Contract Interfaces
 
