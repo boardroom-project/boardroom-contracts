@@ -58,6 +58,7 @@ Here are some other Rules contract examples, found in `contracts/examples`, plea
  10. [MultiSigRules](https://github.com/boardroom-project/boardroom-contracts/blob/master/contracts/examples/MultiSigRules.sol) - 100% consensus required to win, signatories can propose, yay vote is signoff
  11. [DecayingQuorumRules](https://github.com/boardroom-project/boardroom-contracts/blob/master/contracts/examples/DecayingQuorumRules.sol) - Min quorum to win decays over block time
  12. [BondRules](https://github.com/boardroom-project/boardroom-contracts/blob/master/contracts/examples/BondRules.sol) - A bond is required for voting, and a proposal to pass
+ 13. [DelegatedVotingRules](https://github.com/boardroom-project/boardroom-contracts/blob/master/contracts/examples/DelegatedVotingRules.sol) - Delegate voting, voting weight 1, can delegate per proposal
 
 ## Contract Interfaces
 
