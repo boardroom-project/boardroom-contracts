@@ -1,3 +1,5 @@
+pragma solidity ^0.4.3;
+
 import "dapple/test.sol";
 import "BoardRoom.sol";
 import "examples/TorontoRules.sol";
@@ -5,6 +7,9 @@ import "examples/OpenRegistry.sol";
 import "OwnedProxy.sol";
 
 contract MemberProxy {
+    /// @notice The contract fallback function
+    function () payable public {}
+
     function newProposal(address _board, string _name, address _proxy, uint _debatePeriod, address _destination, uint _value, bytes _calldata) returns (uint proposalID) {
         return BoardRoom(_board).newProposal(_name, _proxy, _debatePeriod, _destination, _value, _calldata);
     }
@@ -17,8 +22,8 @@ contract MemberProxy {
 }
 
 contract DeployUser {
-    TorontoRules rules;
-    BoardRoom board;
+    /// @notice The contract fallback function
+    function () payable public {}
 
     function createRules (address _registry, address[] _curators) returns (address){
         rules = new TorontoRules(address(_registry), _curators);
@@ -33,6 +38,9 @@ contract DeployUser {
     function setupRules() {
         rules.configureBoard(address(board));
     }
+
+    TorontoRules rules;
+    BoardRoom board;
 }
 
 contract TorontoRulesBoardRoomTest is Test {

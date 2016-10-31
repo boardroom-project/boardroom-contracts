@@ -1,14 +1,22 @@
+pragma solidity ^0.4.3;
+
 import "examples/OpenRegistry.sol";
 import "Rules.sol";
 import "BoardRoom.sol";
 
 contract TorontoRules is Rules {
-    function TorontoRules (address _registry, address[] _curators){
+    modifier boardIsConfigured (address _board) {
+        if (isConfigured[_board]) {
+          _;
+        }
+    }
+
+    function TorontoRules (address _registry, address[] _curators) public {
         registry = OpenRegistry(_registry);
         curators[address(this)] = _curators;
     }
 
-    function hasWon(uint _proposalID) boardIsConfigured(msg.sender) constant returns (bool) {
+    function hasWon (uint _proposalID) boardIsConfigured(msg.sender) public constant returns (bool) {
         BoardRoom board = BoardRoom(msg.sender);
 
         // get voting positions for nay (i.e. 0) and yay (i.e. 1)
@@ -28,30 +36,24 @@ contract TorontoRules is Rules {
         if(yea*10 > (nay + yea)*6 && (nay + yea)*10 > registry.numMembers()*5) {
             return true;
         }
-        
+
         // else the proposal has failed
         return false;
     }
 
-    modifier boardIsConfigured (address _board) {
-        if (isConfigured[_board]) {
-          _
-        }
-    }
-
-    function configureBoard(address _board) {
+    function configureBoard (address _board) public {
       if(!isConfigured[_board]){
         curators[_board] = curators[address(this)];
         for(uint i = 0 ; i < curators[_board].length ; i++){
           isCurator[_board][curators[_board][i]] = true;
         }
-        
+
         // set board to configured
         isConfigured[_board] = true;
       }
     }
 
-    function addCurator (address _curator) boardIsConfigured(msg.sender) {
+    function addCurator (address _curator) boardIsConfigured(msg.sender) public {
         BoardRoom board = BoardRoom(msg.sender);
 
         // add curator to this board
@@ -59,7 +61,7 @@ contract TorontoRules is Rules {
         isCurator[msg.sender][_curator] = true;
     }
 
-    function removeCurator (address _curator) boardIsConfigured(msg.sender) {
+    function removeCurator (address _curator) boardIsConfigured(msg.sender) public {
         BoardRoom board = BoardRoom(msg.sender);
         isCurator[msg.sender][_curator] = false;
 
@@ -71,22 +73,26 @@ contract TorontoRules is Rules {
         }
     }
 
-    function canVote(address _sender, uint _proposalID) boardIsConfigured(msg.sender) constant returns (bool) {
+    function canVote (address _sender, uint _proposalID) boardIsConfigured(msg.sender) public constant returns (bool) {
         BoardRoom board = BoardRoom(msg.sender);
 
-        var (name, destination, proxy, value, validityHash, executed, debatePeriod, created) = board.proposals(_proposalID);
-        if(registry.isMember(_sender) && now < created + debatePeriod) {
+        uint created = board.createdOn(_proposalID);
+        uint debatePeriod = board.debatePeriodOf(_proposalID);
+
+        if(registry.isMember(_sender)
+          && now < created + debatePeriod
+          && !board.hasVoted(_proposalID, _sender)) {
             return true;
         }
     }
 
-    function canPropose(address _sender) boardIsConfigured(msg.sender) constant returns (bool) {
+    function canPropose (address _sender) boardIsConfigured(msg.sender) public constant returns (bool) {
         if(registry.isMember(_sender)) {
             return true;
         }
     }
 
-    function votingWeightOf(address _sender, uint _proposalID) constant returns (uint) {
+    function votingWeightOf (address _sender, uint _proposalID) public constant returns (uint) {
         return 1;
     }
 

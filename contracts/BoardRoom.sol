@@ -1,3 +1,5 @@
+pragma solidity ^0.4.3;
+
 import "Rules.sol";
 import "Proxy.sol";
 
@@ -13,6 +15,14 @@ contract BoardRoomInterface {
   function voteOf(uint _proposalID, address _voter) constant returns (uint, uint, uint) {}
   function hasVoted(uint _proposalID, address _voter) constant returns (bool) {}
 
+  function destinationOf(uint _proposalId) public constant returns (address) {}
+  function proxyOf(uint _proposalId) public constant returns (address) {}
+  function valueOf(uint _proposalId) public constant returns (uint) {}
+  function hashOf(uint _proposalId) public constant returns (bytes32) {}
+  function debatePeriodOf(uint _proposalId) public constant returns (uint) {}
+  function createdOn(uint _proposalId) public constant returns (uint) {}
+  function createdBy(uint _proposalId) public constant returns (address) {}
+
   event ProposalCreated(uint _proposalID, address _destination, uint _value);
   event VoteCounted(uint _proposalID, uint _position, address _voter);
   event ProposalExecuted(uint _proposalID, address _sender);
@@ -26,27 +36,30 @@ contract BoardRoom is BoardRoomInterface {
 
   modifier canpropose {
     if(rules.canPropose(msg.sender)) {
-      _
+      _;
     }
   }
 
   modifier canvote (uint _proposalID) {
     if(rules.canVote(msg.sender, _proposalID)) {
-      _
+      _;
     }
   }
 
   modifier haswon(uint _proposalID) {
     if(rules.hasWon(_proposalID)) {
-      _
+      _;
     }
   }
 
   modifier onlyself() {
     if(msg.sender == address(this)) {
-      _
+      _;
     }
   }
+  
+  /// @notice The contract fallback function
+  function () payable public {}
 
   function newProposal(string _name, address _proxy, uint _debatePeriod, address _destination, uint _value, bytes _calldata) canpropose returns (uint proposalID) {
     proposalID = proposals.length++;
@@ -58,6 +71,7 @@ contract BoardRoom is BoardRoomInterface {
     p.hash = sha3(_destination, _value, _calldata);
     p.debatePeriod = _debatePeriod * 1 days;
     p.created = now;
+    p.from = msg.sender;
     ProposalCreated(proposalID, _destination, _value);
   }
 
@@ -127,6 +141,34 @@ contract BoardRoom is BoardRoomInterface {
     }
   }
 
+  function destinationOf(uint _proposalId) public constant returns (address) {
+    return proposals[_proposalId].destination;
+  }
+
+  function proxyOf(uint _proposalId) public constant returns (address) {
+    return proposals[_proposalId].proxy;
+  }
+
+  function valueOf(uint _proposalId) public constant returns (uint) {
+    return proposals[_proposalId].value;
+  }
+
+  function hashOf(uint _proposalId) public constant returns (bytes32) {
+    return proposals[_proposalId].hash;
+  }
+
+  function debatePeriodOf(uint _proposalId) public constant returns (uint) {
+    return proposals[_proposalId].debatePeriod;
+  }
+
+  function createdOn(uint _proposalId) public constant returns (uint) {
+    return proposals[_proposalId].created;
+  }
+
+  function createdBy(uint _proposalId) public constant returns (address) {
+    return proposals[_proposalId].from;
+  }
+
   struct Proposal {
     string name;
     address destination;
@@ -136,6 +178,7 @@ contract BoardRoom is BoardRoomInterface {
     bool executed;
     uint debatePeriod;
     uint created;
+    address from;
     mapping(uint => uint) positions;
     mapping(address => Vote) votes;
     address[] voters;

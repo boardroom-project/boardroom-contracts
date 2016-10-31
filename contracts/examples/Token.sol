@@ -1,3 +1,5 @@
+pragma solidity ^0.4.3;
+
 contract Token {
 
     /// @return total amount of tokens

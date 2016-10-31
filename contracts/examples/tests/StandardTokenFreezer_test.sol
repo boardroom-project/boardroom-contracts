@@ -1,9 +1,14 @@
+pragma solidity ^0.4.3;
+
 import "dapple/test.sol";
 import "examples/StandardToken.sol";
 import "examples/HumanStandardTokenFactory.sol";
 import "examples/StandardTokenFreezer.sol";
 
 contract FreezerUserProxy {
+  /// @notice The contract fallback function
+  function () payable public {}
+    
   function createHumanStandardToken(address _factory, uint256 _initialAmount, string _name, uint8 _decimals, string _symbol) returns (address) {
     return HumanStandardTokenFactory(_factory).createHumanStandardToken(_initialAmount, _name, _decimals, _symbol);
   }

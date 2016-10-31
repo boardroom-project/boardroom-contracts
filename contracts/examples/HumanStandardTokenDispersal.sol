@@ -1,9 +1,11 @@
+pragma solidity ^0.4.3;
+
 import "examples/HumanStandardToken.sol";
 
 contract HumanStandardTokenDispersal {
   event TokenCreated(address _token);
 
-  function createHumanStandardToken(
+  function createHumanStandardToken (
       address[] _accounts,
       uint[] _accountAmounts,
       string _tokenName,
