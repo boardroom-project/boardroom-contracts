@@ -1,16 +1,13 @@
 pragma solidity ^0.4.3;
 
-import "examples/Owner.sol";
+import "owned.sol";
 
 contract BalanceClaimInterface {
   /// @notice use `claimBalance` to selfdestruct this contract and claim all balance to the owner address
   function claimBalance();
 }
 
-contract BalanceClaim is Owner, BalanceClaimInterface {
-  /// @notice The contract fallback function
-  function () payable public {}
-
+contract BalanceClaim is owned, BalanceClaimInterface {
   /// @notice The BalanceClaim constructor method
   /// @param _owner the address of the balance claim owner
   function BalanceClaim(address _owner) {

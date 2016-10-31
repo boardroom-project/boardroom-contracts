@@ -16,14 +16,14 @@ contract DecayingQuorumRules is Rules {
     uint nay = board.positionWeightOf(_proposalID, 0);
     uint yea = board.positionWeightOf(_proposalID, 1);
     uint quorum = StandardToken(token.token()).totalSupply();
-    uint divisor = 60;
+    uint divisor = 20;
 
     if (block.number > startBlock + 5000) {
       divisor = 40;
     }
 
     if (block.number > startBlock + 10000) {
-      divisor = 20;
+      divisor = 60;
     }
 
     if((yea + nay) > quorum / divisor && yea > nay) {

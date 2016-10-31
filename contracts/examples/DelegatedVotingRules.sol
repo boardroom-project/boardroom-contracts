@@ -12,10 +12,19 @@ contract DelegatedVotingRules is Rules {
     registry = OpenRegistry(_registry);
   }
 
-  function delegateVote(address _board, address _delegate, uint _proposalID) {
-    if (!delegated[_board][msg.sender][_proposalID]) {
-      delegated[_board][msg.sender][_proposalID] = true;
-      delegation[_board][msg.sender][_proposalID] = _delegate;
+  function delegateVote(address _board, address _delegate, uint _proposalID) public {
+    BoardRoom board = BoardRoom(_board);
+
+    uint created = board.createdOn(_proposalID);
+    uint debatePeriod = board.debatePeriodOf(_proposalID);
+
+    if(votingWeightOf(msg.sender, _proposalID) > 0
+      && now < (created + debatePeriod)
+      && board.hasVoted(_proposalID, msg.sender) == false
+      && delegated[_board][_proposalID][msg.sender] == false) {
+      delegated[_board][_proposalID][msg.sender] = true;
+      delegatedTo[_board][_proposalID][msg.sender] = _delegate;
+      delegatedWeight[_board][_proposalID][_delegate] += 1;
     }
   }
 
@@ -37,10 +46,8 @@ contract DelegatedVotingRules is Rules {
     uint created = board.createdOn(_proposalID);
     uint debatePeriod = board.debatePeriodOf(_proposalID);
 
-    if(((registry.isMember(_sender) && !delegated[address(board)][msg.sender][_proposalID])
-      || (delegated[address(board)][msg.sender][_proposalID]
-      && delegation[address(board)][msg.sender][_proposalID] == _sender))
-      && !board.hasVoted(_proposalID, _sender)
+    if(!board.hasVoted(_proposalID, _sender)
+      && delegated[msg.sender][_proposalID][_sender] == false
       && now < created + debatePeriod) {
       return true;
     }
@@ -53,10 +60,14 @@ contract DelegatedVotingRules is Rules {
   }
 
   function votingWeightOf(address _sender, uint _proposalID) public constant returns (uint) {
-    return 1;
+    if (delegated[msg.sender][_proposalID][_sender] == false) {
+      return 1 + delegatedWeight[msg.sender][_proposalID][_sender];
+    }
   }
 
-  mapping(address => mapping(address => mapping(uint => bool))) public delegated;
-  mapping(address => mapping(address => mapping(uint => address))) public delegation;
+  mapping(address => mapping(uint => mapping(address => bool))) public delegated;
+  mapping(address => mapping(uint => mapping(address => address))) public delegatedTo;
+  mapping(address => mapping(uint => mapping(address => uint))) public delegatedWeight;
+
   OpenRegistry public registry;
 }

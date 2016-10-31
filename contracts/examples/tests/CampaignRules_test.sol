@@ -90,7 +90,7 @@ contract MemberProxy {
   }
 }
 
-/*
+
 // dealing with these issues:
 // https://github.com/nexusdev/dapple/issues/344
 
@@ -254,4 +254,3 @@ contract CampaignRulesTest is Test {
   }
 
 }
-*/
