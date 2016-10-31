@@ -59,7 +59,7 @@ Here are some other Rules contract examples, found in `contracts/examples`, plea
  11. [DecayingQuorumRules](https://github.com/boardroom-project/boardroom-contracts/blob/master/contracts/examples/DecayingQuorumRules.sol) - Min quorum to win decays over block time
  12. [BondRules](https://github.com/boardroom-project/boardroom-contracts/blob/master/contracts/examples/BondRules.sol) - A bond is required for voting, and a proposal to pass
  13. [DelegatedVotingRules](https://github.com/boardroom-project/boardroom-contracts/blob/master/contracts/examples/DelegatedVotingRules.sol) - Delegate voting, voting weight 1, can delegate per proposal
- 14. [LiquidDemocracyRules](https://github.com/boardroom-project/boardroom-contracts/blob/master/contracts/examples/LiquidDemocracyRules.sol) - Delegated voting, tokens, decaying qourum, bond requirements, curators, required confirguation
+ 14. [LiquidDemocracyRules](https://github.com/boardroom-project/boardroom-contracts/blob/master/contracts/examples/LiquidDemocracyRules.sol) - Delegated voting, tokens, decaying quorum, bond requirements, curators, required confirguation
 
 ## Contract Interfaces
 
