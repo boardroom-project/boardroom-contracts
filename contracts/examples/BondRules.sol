@@ -13,7 +13,7 @@ contract RequiredBondRules is Rules {
     }
   }
 
-  function OpenRegistryRules(address _registry) public {
+  function RequiredBondRules (address _registry) public {
     registry = OpenRegistry(_registry);
   }
 
