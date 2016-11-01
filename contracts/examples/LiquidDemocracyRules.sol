@@ -11,8 +11,8 @@ contract LiquidDemocracyRules is Rules {
     }
   }
 
-  modifier bondPosted (uint _proposalID) {
-    if (bonds[_proposalID] > minimumBondRequired) {
+  modifier bondPosted (address _board, uint _proposalID) {
+    if (bonds[_board][_proposalID] > minimumBondRequired) {
       _;
     }
   }
@@ -59,11 +59,12 @@ contract LiquidDemocracyRules is Rules {
     }
   }
 
-  function depositBond(uint _proposalID) payable {
-    bonds[_proposalID] += msg.value;
+  function depositBond(address _board, uint _proposalID) payable {
+    bonds[_board][_proposalID] += msg.value;
+    balance[_board] += msg.value;
   }
 
-  function delegateVote(address _board, address _delegate, uint _proposalID) bondPosted(_proposalID) public {
+  function delegateVote(address _board, address _delegate, uint _proposalID) bondPosted(_board, _proposalID) public {
     BoardRoom board = BoardRoom(_board);
 
     uint created = board.createdOn(_proposalID);
@@ -80,7 +81,7 @@ contract LiquidDemocracyRules is Rules {
     }
   }
 
-  function hasWon (uint _proposalID) boardConfigured(msg.sender) bondPosted(_proposalID) public constant returns (bool) {
+  function hasWon (uint _proposalID) boardConfigured(msg.sender) bondPosted(msg.sender, _proposalID) public constant returns (bool) {
     BoardRoom board = BoardRoom(msg.sender);
 
     uint nay = board.positionWeightOf(_proposalID, 0);
@@ -109,7 +110,7 @@ contract LiquidDemocracyRules is Rules {
     }
   }
 
-  function canVote (address _sender, uint _proposalID) boardConfigured(msg.sender) bondPosted(_proposalID) public constant returns (bool) {
+  function canVote (address _sender, uint _proposalID) boardConfigured(msg.sender) bondPosted(msg.sender, _proposalID) public constant returns (bool) {
     BoardRoom board = BoardRoom(msg.sender);
 
     uint created = board.createdOn(_proposalID);
@@ -130,7 +131,18 @@ contract LiquidDemocracyRules is Rules {
     }
   }
 
-  function votingWeightOf (address _sender, uint _proposalID) boardConfigured(msg.sender) bondPosted(_proposalID) public constant returns (uint) {
+  function widthrawBondFunds(address _destination) payable {
+    if (balance[msg.sender] > 0) {
+      uint balanceToSend = balance[msg.sender];
+      balance[msg.sender] = 0;
+
+      if (!_destination.send(balanceToSend)) {
+        throw;
+      }
+    }
+  }
+
+  function votingWeightOf (address _sender, uint _proposalID) boardConfigured(msg.sender) bondPosted(msg.sender, _proposalID) public constant returns (uint) {
     if (delegated[msg.sender][_proposalID][_sender] == false) {
       return token.balanceOf(_sender) + delegatedWeight[msg.sender][_proposalID][_sender];
     }
@@ -141,7 +153,8 @@ contract LiquidDemocracyRules is Rules {
 
   uint public minimumBondRequired;
   uint public startBlock;
-  mapping(uint => uint) public bonds;
+  mapping(address => uint) public balance;
+  mapping(address => mapping(uint => uint)) public bonds;
 
   mapping(address => mapping(uint => mapping(address => bool))) public delegated;
   mapping(address => mapping(uint => mapping(address => address))) public delegatedTo;
