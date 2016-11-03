@@ -8,12 +8,16 @@ contract LiquidDemocracyRules is Rules {
   modifier boardConfigured (address _board) {
     if (isConfigured[_board]) {
       _;
+    } else {
+        throw;
     }
   }
 
   modifier bondPosted (address _board, uint _proposalID) {
-    if (bonds[_board][_proposalID] > minimumBondRequired) {
+    if (bonds[_board][_proposalID] >= minimumBondRequired) {
       _;
+    } else {
+        throw;
     }
   }
 
@@ -58,15 +62,12 @@ contract LiquidDemocracyRules is Rules {
       }
     }
   }
-
   function depositBond(address _board, uint _proposalID) payable {
     bonds[_board][_proposalID] += msg.value;
     balance[_board] += msg.value;
   }
-
-  function delegateVote(address _board, address _delegate, uint _proposalID) bondPosted(_board, _proposalID) public {
+  function delegateVote(address _board, address _delegate, uint _proposalID) bondPosted(_board, _proposalID) public returns (bool) {
     BoardRoom board = BoardRoom(_board);
-
     uint created = board.createdOn(_proposalID);
     uint debatePeriod = board.debatePeriodOf(_proposalID);
 
@@ -78,7 +79,9 @@ contract LiquidDemocracyRules is Rules {
       delegated[_board][_proposalID][msg.sender] = true;
       delegatedTo[_board][_proposalID][msg.sender] = _delegate;
       delegatedWeight[_board][_proposalID][_delegate] += token.balanceOf(msg.sender);
+      return true;
     }
+    return  false;
   }
 
   function hasWon (uint _proposalID) boardConfigured(msg.sender) bondPosted(msg.sender, _proposalID) public constant returns (bool) {
@@ -115,7 +118,7 @@ contract LiquidDemocracyRules is Rules {
 
     uint created = board.createdOn(_proposalID);
     uint debatePeriod = board.debatePeriodOf(_proposalID);
-
+    return true;
     if(votingWeightOf(_sender, _proposalID) > 0
       && now < (created + debatePeriod)
       && token.frozenUntil(_sender) > (created + debatePeriod)
@@ -142,9 +145,9 @@ contract LiquidDemocracyRules is Rules {
     }
   }
 
-  function votingWeightOf (address _sender, uint _proposalID) boardConfigured(msg.sender) bondPosted(msg.sender, _proposalID) public constant returns (uint) {
+  function votingWeightOf (address _sender, uint _proposalID) public constant returns (uint) {
     if (delegated[msg.sender][_proposalID][_sender] == false) {
-      return token.balanceOf(_sender) + delegatedWeight[msg.sender][_proposalID][_sender];
+      return token.balanceOf(_sender) + delegatedWeight[msg.sender][_proposalID][_sender] ;
     }
   }
 
