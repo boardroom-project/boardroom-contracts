@@ -59,7 +59,8 @@ contract LiquidDemocracyRules is Rules {
 
       for(uint i = 0; i < curators[msg.sender].length; i++){
           if (curators[_board][i] == msg.sender) {
-              delete curators[_board][i];
+              curators[_board][i] = curators[_board][curators[_board].length - 1];
+              curators[_board].length--;
           }
       }
   }
