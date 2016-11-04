@@ -44,6 +44,21 @@ contract BoardMemberProxy {
     function delegateVote(address _board, address _rules,  address _delegate, uint _proposalID) returns (bool){
        return LiquidDemocracyRules(_rules).delegateVote(_board, _delegate, _proposalID);
     }
+    function resignAsCurator (address _board, address _rules){
+        return LiquidDemocracyRules(_rules).resignAsCurator(_board);
+    }
+}
+contract LiquidBoardRoom is BoardRoom {
+    function LiquidBoardRoom (address _rules) BoardRoom (_rules){
+    }
+
+    function addCurator (address _curator) {
+        LiquidDemocracyRules(address(rules)).addCurator(_curator);
+    }
+
+    function removeCurator(address _curator){
+        LiquidDemocracyRules(address(rules)).removeCurator(_curator);
+    }
 }
 contract DeployUser {
     /// @notice The contract fallback function
@@ -55,7 +70,7 @@ contract DeployUser {
     }
 
     function createBoard (address _rules) returns (address) {
-        board = new BoardRoom(_rules);
+        board = new LiquidBoardRoom(_rules);
         return address(board);
     }
 
@@ -64,7 +79,7 @@ contract DeployUser {
     }
 
     LiquidDemocracyRules rules;
-    BoardRoom board;
+    LiquidBoardRoom board;
 }
 
 contract LiquidDemocracyRulesBoardRoomTest is Test {
@@ -72,7 +87,7 @@ contract LiquidDemocracyRulesBoardRoomTest is Test {
     OwnedProxy proxy;
 
     LiquidDemocracyRules rules;
-    BoardRoom board;
+    LiquidBoardRoom board;
 
     address [] curators;
     DeployUser duser;
@@ -103,7 +118,7 @@ contract LiquidDemocracyRulesBoardRoomTest is Test {
 
         rules = LiquidDemocracyRules(duser.createRules(address(freezer), curators, 1));
         address boardAddr = duser.createBoard(address(rules));
-        board = BoardRoom(boardAddr);
+        board = LiquidBoardRoom(boardAddr);
         duser.setupRules();
         proxy = new OwnedProxy(address(board));
         if (proxy.send(600)){
@@ -113,16 +128,7 @@ contract LiquidDemocracyRulesBoardRoomTest is Test {
         }
     }
 
-    /*
-    function test_NumVoterZero(){
-        //expectEventsExact(board);
-    expectEventsExact(member1);
-    member1.newProposal(address(board), "Can I have 14 smarties?", address(proxy), 30, destinationAccount, 400, "");
-    Blahblah();
-    //ProposalCreated (0,destinationAccount, 400);
-    uint numV = board.numVoters(0);
 
-}*/
     function test_proposalVetoedByCurator() {
         HumanStandardToken tokenObj = HumanStandardToken(tokenAddr);
 
@@ -328,4 +334,124 @@ contract LiquidDemocracyRulesBoardRoomTest is Test {
 
     }
 
+    function test_addCurator() {
+        HumanStandardToken tokenObj = HumanStandardToken(tokenAddr);
+
+        address destinationAccount = address(new BoardMemberProxy());
+
+
+        BoardMemberProxy member2= new BoardMemberProxy();
+        BoardMemberProxy member3= new BoardMemberProxy();
+        BoardMemberProxy member4= new BoardMemberProxy();
+        BoardMemberProxy member5= new BoardMemberProxy();
+
+        if(user.send(500000)){
+        }
+
+        assertEq(user.approve(tokenAddr, address(freezer), 100), true);
+        assertEq(user.freezeAllowance(address(freezer), 60), 100);
+        assertEq(freezer.balanceOf(address(user)), 100);
+
+        user.newProposal(address(board), "Can I have 14 smarties?", address(proxy), 30, destinationAccount, 400, "");
+        rules.depositBond.value(1000)(address(board),0);
+
+        assertTrue(user.transfer(tokenAddr, address(member2), 500));
+        assertTrue(member2.approve(tokenAddr, address(freezer), 500));
+        assertEq(member2.freezeAllowance(address(freezer), 60), 500);
+        assertEq(freezer.balanceOf(address(member2)), 500);
+
+        assertTrue(user.transfer(tokenAddr, address(member3), 1300));
+        assertTrue(member3.approve(tokenAddr, address(freezer), 1300));
+        assertEq(member3.freezeAllowance(address(freezer), 60), 1300);
+        assertEq(freezer.balanceOf(address(member3)), 1300);
+
+        assertTrue(user.transfer(tokenAddr, address(member4), 1500));
+        assertTrue(member4.approve(tokenAddr, address(freezer), 1500));
+        assertEq(member4.freezeAllowance(address(freezer), 60), 1500);
+        assertEq(freezer.balanceOf(address(member4)), 1500);
+
+        assertTrue(user.transfer(tokenAddr, address(member5), 100));
+        assertTrue(member5.approve(tokenAddr, address(freezer), 100));
+        assertEq(member5.freezeAllowance(address(freezer), 60), 100);
+        assertEq(freezer.balanceOf(address(member5)), 100);
+
+        assertTrue(member2.delegateVote(address(board), address(rules), address(member3), 0));
+        board.addCurator(address(member5));
+
+        assertEq(user.vote(address(board), 0, 1), 100);
+        assertEq(member2.vote(address(board), 0, 1), 0);
+        assertEq(member3.vote(address(board), 0, 1),1800);
+        assertEq(member4.vote(address(board), 0, 1), 1500);
+        assertEq(member5.vote(address(board), 0, 0), 100);
+
+        assertEq(board.numVoters(0), 5);
+        assertEq(proxy.balance, 600);
+        assertEq(destinationAccount.balance, 0);
+        user.execute(address(board), 0, "");
+        assertEq(proxy.balance, 600);
+        assertEq(destinationAccount.balance, 0);
+
+    }
+    function test_addCuratorThenRemove() {
+        HumanStandardToken tokenObj = HumanStandardToken(tokenAddr);
+
+        address destinationAccount = address(new BoardMemberProxy());
+
+
+        BoardMemberProxy member2= new BoardMemberProxy();
+        BoardMemberProxy member3= new BoardMemberProxy();
+        BoardMemberProxy member4= new BoardMemberProxy();
+        BoardMemberProxy member5= new BoardMemberProxy();
+
+        if(user.send(500000)){
+        }
+
+        assertEq(user.approve(tokenAddr, address(freezer), 100), true);
+        assertEq(user.freezeAllowance(address(freezer), 60), 100);
+        assertEq(freezer.balanceOf(address(user)), 100);
+
+        user.newProposal(address(board), "Can I have 14 smarties?", address(proxy), 30, destinationAccount, 400, "");
+        rules.depositBond.value(1000)(address(board),0);
+
+        assertTrue(user.transfer(tokenAddr, address(member2), 500));
+        assertTrue(member2.approve(tokenAddr, address(freezer), 500));
+        assertEq(member2.freezeAllowance(address(freezer), 60), 500);
+        assertEq(freezer.balanceOf(address(member2)), 500);
+
+        assertTrue(user.transfer(tokenAddr, address(member3), 1300));
+        assertTrue(member3.approve(tokenAddr, address(freezer), 1300));
+        assertEq(member3.freezeAllowance(address(freezer), 60), 1300);
+        assertEq(freezer.balanceOf(address(member3)), 1300);
+
+        assertTrue(user.transfer(tokenAddr, address(member4), 1500));
+        assertTrue(member4.approve(tokenAddr, address(freezer), 1500));
+        assertEq(member4.freezeAllowance(address(freezer), 60), 1500);
+        assertEq(freezer.balanceOf(address(member4)), 1500);
+
+        assertTrue(user.transfer(tokenAddr, address(member5), 1));
+        assertTrue(member5.approve(tokenAddr, address(freezer), 1));
+        assertEq(member5.freezeAllowance(address(freezer), 60), 1);
+        assertEq(freezer.balanceOf(address(member5)), 1);
+
+        assertTrue(member2.delegateVote(address(board), address(rules), address(member3), 0));
+
+        board.addCurator(address(member5));
+        board.removeCurator(address(member5));
+
+
+        assertEq(user.vote(address(board), 0, 1), 100);
+        assertEq(member2.vote(address(board), 0, 1), 0);
+        assertEq(member3.vote(address(board), 0, 1),1800);
+        assertEq(member4.vote(address(board), 0, 1), 1500);
+        assertEq(member5.vote(address(board), 0, 0), 1);
+
+
+        assertEq(board.numVoters(0), 5);
+        assertEq(proxy.balance, 600);
+        assertEq(destinationAccount.balance, 0);
+        user.execute(address(board), 0, "");
+        assertEq(proxy.balance, 200);
+        assertEq(destinationAccount.balance, 400);
+
+    }
 }

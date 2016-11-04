@@ -48,19 +48,20 @@ contract LiquidDemocracyRules is Rules {
 
       for(uint i = 0; i < curators[msg.sender].length; i++){
           if (curators[msg.sender][i] == _curator) {
-              delete curators[msg.sender][i];
+              curators[msg.sender][i] = curators[msg.sender][curators[msg.sender].length - 1];
+              curators[msg.sender].length--;
           }
       }
   }
 
   function resignAsCurator(address _board) boardConfigured(_board) public {
-    isCurator[_board][msg.sender] = false;
+      isCurator[_board][msg.sender] = false;
 
-    for(uint i = 0; i < curators[msg.sender].length; i++){
-      if (curators[_board][i] == msg.sender) {
-        delete curators[_board][i];
+      for(uint i = 0; i < curators[msg.sender].length; i++){
+          if (curators[_board][i] == msg.sender) {
+              delete curators[_board][i];
+          }
       }
-    }
   }
   function depositBond(address _board, uint _proposalID) payable {
     bonds[_board][_proposalID] += msg.value;
