@@ -48,8 +48,7 @@ contract LiquidDemocracyRules is Rules {
 
       for(uint i = 0; i < curators[msg.sender].length; i++){
           if (curators[msg.sender][i] == _curator) {
-              curators[msg.sender][i] = curators[msg.sender][curators[msg.sender].length - 1];
-              curators[msg.sender].length--;
+              delete curators[msg.sender][i];
           }
       }
   }
@@ -59,8 +58,7 @@ contract LiquidDemocracyRules is Rules {
 
       for(uint i = 0; i < curators[msg.sender].length; i++){
           if (curators[_board][i] == msg.sender) {
-              curators[_board][i] = curators[_board][curators[_board].length - 1];
-              curators[_board].length--;
+              delete curators[_board][i];
           }
       }
   }
@@ -94,7 +92,7 @@ contract LiquidDemocracyRules is Rules {
 
     for(uint i = 0; i < curators[msg.sender].length; i++){
       var (position, weight, created) = board.voteOf(_proposalID, curators[msg.sender][i]);
-      if (position == 0){
+      if (position == 0 && curators[msg.sender][i] != address(0x0)){
         return false;
       }
     }
