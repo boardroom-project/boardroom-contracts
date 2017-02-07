@@ -33,7 +33,7 @@ contract TorontoRules is Rules {
         }
 
         // 50 percent of the members have to vote, 60% majority is a pass
-        if(yea*10 > (nay + yea)*6 && (nay + yea)*10 > registry.numMembers()*5) {
+        if((nay+yea)*2 > registry.numMembers() && yea > (nay+yea)*3/5) {
             return true;
         }
 
