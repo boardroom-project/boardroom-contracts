@@ -1,5 +1,5 @@
-# boardroom-contracts
-All BoardRoom contracts.
+# Boardroom Governance Framework
+The Boardroom Governance Framework is the design pattern for All BoardRoom contracts
 
 <img src="assets/standardBoardRoomContractDesignDiagram.jpg" />
 
