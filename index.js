@@ -1,7 +1,7 @@
 const classes = require('./lib/classes.json');
 const environments = require('./lib/environments.json');
 
-module.export = {
+module.exports = {
   'contracts': classes,
   'environments': environments,
 };
